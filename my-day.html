@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My day · OOBS Volunteer Assistant</title>
+  <meta name="theme-color" content="#1b1440">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="myday">
+  <div class="pride-bar" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="back" href="index.html" aria-label="All stations">← <span data-text="ui.backHome"></span></a>
+    <button class="btn btn-catchup btn-small" type="button" data-catchup></button>
+  </header>
+
+  <main class="wrap wrap-wide">
+    <section class="station-head">
+      <span class="station-emoji" aria-hidden="true">🗓️</span>
+      <div>
+        <p class="eyebrow" data-text="event.name"></p>
+        <h1 data-text="myDay.title"></h1>
+      </div>
+    </section>
+    <p class="muted" data-text="myDay.intro"></p>
+
+    <fieldset class="roles">
+      <legend class="fact-label" data-text="myDay.pickRole"></legend>
+      <div class="role-chips" id="role-chips"></div>
+    </fieldset>
+
+    <div class="clock">
+      <label for="clock-input"><span data-text="myDay.clockLabel"></span></label>
+      <input id="clock-input" type="time" step="300">
+      <span class="badge" id="clock-badge" data-text="myDay.demoBadge" hidden></span>
+      <button class="linkish" type="button" id="clock-real" data-text="myDay.useRealTime" hidden></button>
+    </div>
+
+    <section class="now-card" id="now-card" aria-live="polite"></section>
+
+    <div class="day-grid">
+      <section class="card map-card" aria-labelledby="map-title">
+        <h2 id="map-title" data-text="myDay.mapTitle"></h2>
+        <div id="map"></div>
+        <p class="map-caption" id="map-caption"></p>
+        <p class="muted small" data-text="myDay.mapNote"></p>
+      </section>
+      <section class="card">
+        <h2 id="tl-title"></h2>
+        <ol class="timeline" id="timeline"></ol>
+        <a class="btn btn-outline btn-small" id="station-link" href="#"></a>
+      </section>
+    </div>
+    <p class="muted small" data-text="myDay.demoNote"></p>
+  </main>
+
+  <footer class="footer" data-text="ui.footer"></footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>

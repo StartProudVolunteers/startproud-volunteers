@@ -162,6 +162,198 @@
     });
   }
 
+
+  /* ---------- my day ---------- */
+  function toMin(t) { var p = String(t).split(":"); return (+p[0]) * 60 + (+p[1]); }
+  function fmt(t) {
+    var m = typeof t === "number" ? t : toMin(t), h = Math.floor(m / 60), mm = m % 60;
+    return ((h + 11) % 12 + 1) + ":" + (mm < 10 ? "0" : "") + mm + " " + (h < 12 ? "AM" : "PM");
+  }
+  function store(k, v) {
+    try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; }
+  }
+  var SVG = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs, text) {
+    var n = document.createElementNS(SVG, tag);
+    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  // Stacked-floor sketch: top floor first, each floor a slab split into rooms by 'size'.
+  function drawMap(md, activeRoom) {
+    var W = 340, slabH = 58, gap = 16, labelW = 50, depth = 7;
+    var H = md.floors.length * (slabH + gap) + depth;
+    var root = svg("svg", { viewBox: "0 0 " + W + " " + H, "class": "venue-map", role: "img" });
+    var activeFloor = null;
+    md.floors.forEach(function (f) { f.rooms.forEach(function (r) { if (r.id === activeRoom) activeFloor = f; }); });
+    root.setAttribute("aria-label", activeFloor
+      ? "Venue map. Highlighted: " + activeFloor.name + ", " + roomById(md, activeRoom).name
+      : "Venue map");
+
+    md.floors.forEach(function (f, i) {
+      var y = depth + i * (slabH + gap), x0 = labelW, w = W - labelW - depth - 2;
+      var on = f === activeFloor;
+      var g = svg("g", { "class": "floor" + (on ? " is-active" : "") });
+      // slab "thickness" to read as stacked floors
+      g.appendChild(svg("rect", { "class": "slab-side", x: x0 + depth, y: y - depth, width: w, height: slabH, rx: 4 }));
+      g.appendChild(svg("rect", { "class": "slab", x: x0, y: y, width: w, height: slabH, rx: 4 }));
+      g.appendChild(svg("text", { "class": "floor-label", x: labelW - 8, y: y + slabH / 2 + 4, "text-anchor": "end" },
+        f.id === "G" ? "G" : f.id));
+      var total = f.rooms.reduce(function (a, r) { return a + (r.size || 1); }, 0), pad = 5, rx = x0 + pad;
+      var inner = w - pad * 2 - pad * (f.rooms.length - 1);
+      f.rooms.forEach(function (r) {
+        var rw = inner * (r.size || 1) / total, hit = r.id === activeRoom;
+        var rg = svg("g", { "class": "room" + (hit ? " is-active" : "") });
+        rg.appendChild(svg("rect", { x: rx, y: y + pad, width: rw, height: slabH - pad * 2, rx: 3 }));
+        var words = r.short.split(" "), lines = [""];
+        // wrap label to fit the room box (approx 6.1px per char at 11px)
+        words.forEach(function (wd) {
+          var cur = lines[lines.length - 1];
+          if ((cur + " " + wd).trim().length * 6.1 > rw - 8 && cur) lines.push(wd);
+          else lines[lines.length - 1] = (cur + " " + wd).trim();
+        });
+        lines.forEach(function (ln, li) {
+          rg.appendChild(svg("text", { x: rx + rw / 2, y: y + slabH / 2 + 4 + (li - (lines.length - 1) / 2) * 12,
+            "text-anchor": "middle" }, ln));
+        });
+        if (hit) rg.appendChild(svg("circle", { "class": "pin", cx: rx + rw - 8, cy: y + pad + 8, r: 4 }));
+        g.appendChild(rg);
+        rx += rw + pad;
+      });
+      root.appendChild(g);
+    });
+    var holder = document.getElementById("map");
+    holder.innerHTML = "";
+    holder.appendChild(root);
+  }
+  function roomById(md, id) {
+    var found = null;
+    md.floors.forEach(function (f) { f.rooms.forEach(function (r) { if (r.id === id) found = { name: r.name, floor: f.name }; }); });
+    return found || { name: id, floor: "" };
+  }
+
+  function renderMyDay(data) {
+    var md = data.myDay;
+    var params = new URLSearchParams(location.search);
+    var roleId = params.get("role") || store("oobs-role") || md.roles[0].id;
+    if (!md.roles.some(function (r) { return r.id === roleId; })) roleId = md.roles[0].id;
+    var picked = null;           // slot index the user tapped (overrides "now" on the map)
+    var manualClock = null;      // minutes, when the user set the clock
+
+    var clockIn = document.getElementById("clock-input");
+    var badge = document.getElementById("clock-badge");
+    var realBtn = document.getElementById("clock-real");
+
+    function nowMin() {
+      if (manualClock != null) return { m: manualClock, demo: true };
+      var d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+      if (m < toMin(md.eventHours.start) || m > toMin(md.eventHours.end)) return { m: toMin(md.demoTime), demo: true };
+      return { m: m, demo: false };
+    }
+
+    var chips = document.getElementById("role-chips");
+    md.roles.forEach(function (r) {
+      var b = el("button", { "class": "chip role-chip", type: "button", "data-role": r.id }, (r.emoji || "") + " " + r.name);
+      b.addEventListener("click", function () {
+        roleId = r.id; picked = null; store("oobs-role", r.id);
+        history.replaceState(null, "", "?role=" + encodeURIComponent(r.id));
+        render();
+      });
+      chips.appendChild(b);
+    });
+    clockIn.addEventListener("change", function () {
+      if (!clockIn.value) return;
+      manualClock = toMin(clockIn.value); picked = null; render();
+    });
+    realBtn.addEventListener("click", function () { manualClock = null; picked = null; render(); });
+
+    function render() {
+      var role = md.roles.filter(function (r) { return r.id === roleId; })[0];
+      var t = nowMin();
+      chips.querySelectorAll(".role-chip").forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.getAttribute("data-role") === roleId));
+      });
+      var hh = Math.floor(t.m / 60), mm = t.m % 60;
+      clockIn.value = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+      badge.hidden = !t.demo;
+      realBtn.hidden = manualClock == null;
+
+      var slots = role.slots, cur = -1, nxt = -1;
+      slots.forEach(function (s, i) {
+        if (t.m >= toMin(s.start) && t.m < toMin(s.end)) cur = i;
+        if (nxt < 0 && toMin(s.start) > t.m) nxt = i;
+      });
+
+      // Now card
+      var card = document.getElementById("now-card");
+      card.innerHTML = "";
+      var focus = cur >= 0 ? cur : nxt;
+      if (cur >= 0) {
+        var s = slots[cur], loc = roomById(md, s.room);
+        card.appendChild(el("p", { "class": "now-label" }, md.now + " · " + fmt(s.start) + "–" + fmt(s.end)));
+        card.appendChild(el("p", { "class": "now-title" }, s.title));
+        card.appendChild(el("p", { "class": "now-where" }, "📍 " + loc.floor + " · " + loc.name));
+        if (nxt >= 0) card.appendChild(el("p", { "class": "now-next" },
+          md.upNext + ": " + slots[nxt].title + " at " + fmt(slots[nxt].start)));
+      } else if (nxt >= 0) {
+        var n = slots[nxt], nl = roomById(md, n.room);
+        var lead = t.m < toMin(slots[0].start) ? md.beforeStart : md.between;
+        card.appendChild(el("p", { "class": "now-label" }, md.next));
+        card.appendChild(el("p", { "class": "now-title" }, lead + " " + fmt(n.start) + ": " + n.title));
+        card.appendChild(el("p", { "class": "now-where" }, "📍 " + nl.floor + " · " + nl.name));
+      } else {
+        card.appendChild(el("p", { "class": "now-title" }, md.allDone));
+      }
+
+      // Timeline
+      document.getElementById("tl-title").textContent = (role.emoji || "") + " " + role.name;
+      var tl = document.getElementById("timeline");
+      tl.innerHTML = "";
+      slots.forEach(function (s, i) {
+        var loc = roomById(md, s.room);
+        var state = i === cur ? "is-now" : (toMin(s.end) <= t.m ? "is-past" : "");
+        var li = el("li", { "class": "slot " + state + (picked === i ? " is-picked" : "") });
+        var btn = el("button", { type: "button", "aria-pressed": String(picked === i) });
+        btn.appendChild(el("span", { "class": "slot-time" }, fmt(s.start) + " – " + fmt(s.end)));
+        var body = el("span", { "class": "slot-body" });
+        body.appendChild(el("strong", null, s.title + (i === cur ? "  · " + md.now : "")));
+        body.appendChild(el("span", { "class": "slot-where" }, loc.floor + " · " + loc.name));
+        if (s.note) body.appendChild(el("span", { "class": "slot-note" }, s.note));
+        btn.appendChild(body);
+        btn.addEventListener("click", function () { picked = picked === i ? null : i; render(); });
+        li.appendChild(btn);
+        tl.appendChild(li);
+      });
+
+      // Map: tapped slot, else current, else next
+      var show = picked != null ? picked : focus;
+      var room = show >= 0 ? slots[show].room : null;
+      drawMap(md, room);
+      var cap = document.getElementById("map-caption");
+      if (room) {
+        var rl = roomById(md, room);
+        cap.textContent = (show === cur ? md.now : fmt(slots[show].start)) + ": " + rl.floor + " · " + rl.name;
+      } else cap.textContent = "";
+
+      var sl = document.getElementById("station-link");
+      var st = data.stations.filter(function (x) { return x.id === role.station; })[0];
+      sl.hidden = !st;
+      if (st) { sl.href = "station.html?id=" + st.id; sl.textContent = (st.emoji || "") + " " + st.name + " station page →"; }
+    }
+    render();
+    setInterval(function () { if (manualClock == null) render(); }, 60000);
+  }
+
+  /* ---------- nav ---------- */
+  function addMyDayLinks(data, stationId) {
+    var role = stationId && data.myDay.roles.filter(function (r) { return r.station === stationId; })[0];
+    document.querySelectorAll("[data-myday]").forEach(function (a) {
+      a.href = "my-day.html" + (role ? "?role=" + encodeURIComponent(role.id) : "");
+      a.textContent = "🗓️ " + data.ui.myDay;
+    });
+  }
+
   /* ---------- boot ---------- */
   fetch(DATA_URL, { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -171,6 +363,8 @@
       var page = document.body.getAttribute("data-page");
       if (page === "home") renderHome(data);
       if (page === "station") renderStation(data);
+      if (page === "myday") renderMyDay(data);
+      addMyDayLinks(data, page === "station" ? new URLSearchParams(location.search).get("id") : null);
     })
     .catch(function (err) {
       var main = document.querySelector("main");

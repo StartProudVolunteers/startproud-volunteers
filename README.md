@@ -12,6 +12,7 @@ No backend, no build step: plain HTML, CSS and JavaScript.
 |---|---|
 | `index.html` | Home page: event header, **Catch me up**, list of stations |
 | `station.html?id=…` | One template for all 5 stations (`registration`, `career-fair`, `victory-ballroom`, `green-room`, `volunteer-hq`) |
+| `my-day.html?role=…` | **My day**: pick a role, see a personal timeline and a stacked-floor venue map with your current room highlighted |
 | `data/content.json` | **Every word in the app.** Edit this, not the code. |
 | `assets/app.js` | Renders the JSON, runs the keyword-matching chat |
 | `assets/style.css` | Styles (light + dark mode) |
@@ -32,6 +33,14 @@ The live site updates in about a minute.
     The answer with the most keyword hits wins; station answers beat general ones on a tie.
   - `answer`: what the bot says.
 - **`globalAnswers`**: answers every station can give (washrooms, Wi-Fi, lunch, first aid, …).
+- **`myDay.roles`**: one entry per role (Registration, Career Fair, Ballroom, Green Room, Floater).
+  Each `slots` item has 24-hour `start`/`end` (`"09:45"`), a `title`, an optional `note`, and a `room`
+  that must match a room `id` under `myDay.floors`. `station` links the role to its station page.
+- **`myDay.floors`**: the venue map, top floor first. Each room has a full `name` (timeline),
+  a `short` label (map) and a `size` (relative width on the map). The map is a simplified sketch
+  drawn by the app; it isn't based on the hotel's real floor plans.
+- **`myDay.demoTime`**: the time My day pretends it is outside `eventHours`, so the demo always
+  shows something. Volunteers can also change the clock on the page.
 - **`ui.fallback`**: the "I'm not sure, message your lead" reply when nothing matches.
 
 Rules of JSON: keep the double quotes, put a comma between items but **not** after the last

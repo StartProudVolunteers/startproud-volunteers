@@ -11,8 +11,11 @@
 <body data-page="station">
   <div class="pride-bar" aria-hidden="true"></div>
   <header class="topbar">
-    <a class="back" href="index.html">← <span data-text="ui.backHome"></span></a>
-    <button class="btn btn-catchup btn-small" type="button" data-catchup></button>
+    <a class="back" href="index.html" aria-label="All stations">← <span data-text="ui.backHome"></span></a>
+    <div class="topbar-actions">
+      <a class="btn btn-outline btn-small" data-myday href="my-day.html">My day</a>
+      <button class="btn btn-catchup btn-small" type="button" data-catchup></button>
+    </div>
   </header>
 
   <main class="wrap" id="station">

@@ -1,6 +1,5 @@
 {
   "_readme": "EDIT THIS FILE to change any text in the app. Keep the quotes and commas. Keywords are lowercase words or short phrases; if a volunteer's question contains one, that answer can match. 'suggest': true shows the question as a tap button. All names, numbers and details are invented sample data.",
-
   "event": {
     "name": "Out on Bay Street",
     "shortName": "OOBS",
@@ -8,7 +7,6 @@
     "dates": "Two-day conference · Day 2 of 2",
     "tagline": "Your volunteer assistant. Pick your station to see what to do, who your lead is, and quick answers."
   },
-
   "ui": {
     "homeHeading": "Where are you volunteering?",
     "whatToDo": "What to do here",
@@ -25,9 +23,9 @@
     "catchUpClose": "Got it",
     "backHome": "All stations",
     "allStationsNote": "Bookmark your station or scan the QR card at your table.",
-    "footer": "Concept demo by Team B, not an official Start Proud tool."
+    "footer": "Concept demo by Team B, not an official Start Proud tool.",
+    "myDay": "My day"
   },
-
   "catchUp": {
     "title": "Today's changes",
     "updated": "Updated 7:45 AM",
@@ -39,50 +37,104 @@
       "Lost & found is now at Volunteer HQ only. Radio channel for all leads is Channel 4."
     ]
   },
-
   "globalAnswers": [
     {
       "question": "Where are the washrooms?",
-      "keywords": ["washroom", "bathroom", "restroom", "toilet", "all-gender", "gender neutral"],
+      "keywords": [
+        "washroom",
+        "bathroom",
+        "restroom",
+        "toilet",
+        "all-gender",
+        "gender neutral"
+      ],
       "answer": "All-gender washrooms are on every floor next to the elevators. Accessible washrooms are on floors 1 and 3 beside the stairwell."
     },
     {
       "question": "What's the Wi-Fi?",
-      "keywords": ["wifi", "wi-fi", "internet", "password", "network"],
+      "keywords": [
+        "wifi",
+        "wi-fi",
+        "internet",
+        "password",
+        "network"
+      ],
       "answer": "Network: OOBS-Guest · Password: ProudTogether26 (sample). Volunteers can use the same network."
     },
     {
       "question": "When is volunteer lunch?",
-      "keywords": ["lunch", "food", "eat", "meal", "break", "hungry", "snack"],
+      "keywords": [
+        "lunch",
+        "food",
+        "eat",
+        "meal",
+        "break",
+        "hungry",
+        "snack"
+      ],
       "answer": "Volunteer lunch is 11:30 AM–1:00 PM in the 2nd-floor Foyer. Check with your lead before stepping away so your station stays covered."
     },
     {
       "question": "Someone needs first aid. What do I do?",
-      "keywords": ["first aid", "medical", "hurt", "injured", "emergency", "sick", "faint", "911", "ambulance"],
+      "keywords": [
+        "first aid",
+        "medical",
+        "hurt",
+        "injured",
+        "emergency",
+        "sick",
+        "faint",
+        "911",
+        "ambulance"
+      ],
       "answer": "If it's life-threatening, call 911 first. Then radio Channel 4 or tell your lead. The first-aid kit and trained responder are at Volunteer HQ."
     },
     {
       "question": "Where is lost and found?",
-      "keywords": ["lost", "found", "lost and found", "missing", "left behind"],
+      "keywords": [
+        "lost",
+        "found",
+        "lost and found",
+        "missing",
+        "left behind"
+      ],
       "answer": "All lost items go to Volunteer HQ (2nd floor, Room 204). Log the item and where it was found on the clipboard by the door."
     },
     {
       "question": "Someone is being harassed or feels unsafe.",
-      "keywords": ["harass", "unsafe", "safety", "code of conduct", "misgender", "inappropriate", "uncomfortable", "security"],
+      "keywords": [
+        "harass",
+        "unsafe",
+        "safety",
+        "code of conduct",
+        "misgender",
+        "inappropriate",
+        "uncomfortable",
+        "security"
+      ],
       "answer": "Stay calm, check in with the person, and don't confront the other party. Radio Channel 4 for a lead or hotel security. Every report is taken seriously under the Code of Conduct."
     },
     {
       "question": "Which radio channel do I use?",
-      "keywords": ["radio", "channel", "walkie"],
+      "keywords": [
+        "radio",
+        "channel",
+        "walkie"
+      ],
       "answer": "All leads are on Channel 4 today. Hotel security is on Channel 9 — only use it for emergencies."
     },
     {
       "question": "Where is the coat check?",
-      "keywords": ["coat", "coat check", "bag", "luggage", "jacket"],
+      "keywords": [
+        "coat",
+        "coat check",
+        "bag",
+        "luggage",
+        "jacket"
+      ],
       "answer": "Coat and bag check is on the ground floor, to the left of the main entrance. It's free for attendees."
     }
   ],
-
   "stations": [
     {
       "id": "registration",
@@ -90,7 +142,11 @@
       "emoji": "🎟️",
       "floor": "Ground floor — Main Lobby",
       "shift": "7:40 AM – 12:00 PM",
-      "lead": { "name": "Priya Ramdass", "pronouns": "she/her", "phone": "+14165550101" },
+      "lead": {
+        "name": "Priya Ramdass",
+        "pronouns": "she/her",
+        "phone": "+14165550101"
+      },
       "tasks": [
         "Greet attendees and ask for their name or the QR code in their confirmation email.",
         "Scan the code (or search by last name) and hand over the badge and lanyard.",
@@ -102,25 +158,52 @@
         {
           "question": "Someone isn't on the list.",
           "suggest": true,
-          "keywords": ["not on the list", "can't find", "cant find", "not registered", "no ticket", "missing name", "walk-in", "walk in"],
+          "keywords": [
+            "not on the list",
+            "can't find",
+            "cant find",
+            "not registered",
+            "no ticket",
+            "missing name",
+            "walk-in",
+            "walk in"
+          ],
           "answer": "Try searching by email and by first name — chosen names may differ from the booking. Still nothing? Send them to the Help Desk at the end of the table; don't turn anyone away yourself."
         },
         {
           "question": "The badge printer jammed.",
           "suggest": true,
-          "keywords": ["printer", "jam", "print", "badge not printing", "paper"],
+          "keywords": [
+            "printer",
+            "jam",
+            "print",
+            "badge not printing",
+            "paper"
+          ],
           "answer": "Use the backup printer under table 3. Hand-write a temporary badge from the blank stack if both are down, and radio your lead."
         },
         {
           "question": "Their name on the badge is wrong.",
           "suggest": true,
-          "keywords": ["wrong name", "name change", "deadname", "chosen name", "reprint", "spelling"],
+          "keywords": [
+            "wrong name",
+            "name change",
+            "deadname",
+            "chosen name",
+            "reprint",
+            "spelling"
+          ],
           "answer": "Reprint right away with the name they give you — no questions, no ID needed. Shred the old badge in the bin under the table."
         },
         {
           "question": "Where do speakers check in?",
           "suggest": false,
-          "keywords": ["speaker", "panelist", "media", "press"],
+          "keywords": [
+            "speaker",
+            "panelist",
+            "media",
+            "press"
+          ],
           "answer": "Speakers and media check in at the Speaker Green Room (3rd floor, Room 310). Walk them to the elevator and point the way."
         }
       ]
@@ -131,7 +214,11 @@
       "emoji": "💼",
       "floor": "2nd floor — Exhibition Hall B",
       "shift": "9:00 AM – 3:30 PM",
-      "lead": { "name": "Marcus Oyelaran", "pronouns": "he/they", "phone": "+14165550102" },
+      "lead": {
+        "name": "Marcus Oyelaran",
+        "pronouns": "he/they",
+        "phone": "+14165550102"
+      },
       "tasks": [
         "Help recruiters find their booth number using the floor map at the entrance.",
         "Keep the aisles clear and the résumé-review line moving (10 minutes each).",
@@ -143,19 +230,40 @@
         {
           "question": "Where is a company's booth?",
           "suggest": true,
-          "keywords": ["booth", "company", "employer", "recruiter booth", "map", "northlake"],
+          "keywords": [
+            "booth",
+            "company",
+            "employer",
+            "recruiter booth",
+            "map",
+            "northlake"
+          ],
           "answer": "Check the large map at the entrance — booths run 1–30 clockwise from the door. Reminder: Northlake Bank moved to booth 22 today."
         },
         {
           "question": "A recruiter needs a power outlet.",
           "suggest": true,
-          "keywords": ["power", "outlet", "plug", "charger", "extension", "electric"],
+          "keywords": [
+            "power",
+            "outlet",
+            "plug",
+            "charger",
+            "extension",
+            "electric"
+          ],
           "answer": "Extension cords are in the grey bin behind the résumé-review table. Tape cords down across walkways with the gaffer tape in the bin."
         },
         {
           "question": "How does résumé review work?",
           "suggest": true,
-          "keywords": ["resume", "résumé", "cv", "review", "line", "queue"],
+          "keywords": [
+            "resume",
+            "résumé",
+            "cv",
+            "review",
+            "line",
+            "queue"
+          ],
           "answer": "Attendees add their name to the sign-up sheet; each session is 10 minutes. If the wait is over 30 minutes, offer them a slot after lunch."
         }
       ]
@@ -166,7 +274,11 @@
       "emoji": "🎤",
       "floor": "3rd floor",
       "shift": "8:30 AM – 5:00 PM",
-      "lead": { "name": "Sam Kowalczyk", "pronouns": "they/them", "phone": "+14165550103" },
+      "lead": {
+        "name": "Sam Kowalczyk",
+        "pronouns": "they/them",
+        "phone": "+14165550103"
+      },
       "tasks": [
         "Stand at your assigned door and help people find seats; keep the front row reserved for speakers.",
         "Hold doors closed while a speaker is on stage — let latecomers in at applause.",
@@ -178,25 +290,58 @@
         {
           "question": "When does the keynote start?",
           "suggest": true,
-          "keywords": ["keynote", "schedule", "agenda", "session", "start time", "panel"],
+          "keywords": [
+            "keynote",
+            "schedule",
+            "agenda",
+            "session",
+            "start time",
+            "panel"
+          ],
           "answer": "Keynote is at 10:00 AM today (moved from 9:30). Afternoon panels start at 1:30 PM. Full agenda is on the screen by the ballroom doors."
         },
         {
           "question": "The ballroom is full.",
           "suggest": true,
-          "keywords": ["full", "no seats", "capacity", "standing", "overflow", "crowded"],
+          "keywords": [
+            "full",
+            "no seats",
+            "capacity",
+            "standing",
+            "overflow",
+            "crowded"
+          ],
           "answer": "Direct people to the overflow livestream in Room 305 across the hall. Don't let people stand in the aisles — it's a fire-code issue."
         },
         {
           "question": "The mic or slides aren't working.",
           "suggest": true,
-          "keywords": ["mic", "microphone", "audio", "sound", "slides", "projector", "av", "a/v", "screen", "tech"],
+          "keywords": [
+            "mic",
+            "microphone",
+            "audio",
+            "sound",
+            "slides",
+            "projector",
+            "av",
+            "a/v",
+            "screen",
+            "tech"
+          ],
           "answer": "Signal the AV booth at the back (wave both arms) and radio Channel 4. Spare handheld mics are in the box at stage left."
         },
         {
           "question": "Someone needs accessible seating.",
           "suggest": false,
-          "keywords": ["accessible", "wheelchair", "accessibility", "asl", "interpreter", "captions", "hearing"],
+          "keywords": [
+            "accessible",
+            "wheelchair",
+            "accessibility",
+            "asl",
+            "interpreter",
+            "captions",
+            "hearing"
+          ],
           "answer": "Accessible seating is front-left, near the ASL interpreter and the live-caption screen. Walk them over and remove the 'reserved' card if needed."
         }
       ]
@@ -207,7 +352,11 @@
       "emoji": "🌿",
       "floor": "3rd floor — Room 310",
       "shift": "8:00 AM – 4:00 PM",
-      "lead": { "name": "Danielle Fournier", "pronouns": "she/they", "phone": "+14165550104" },
+      "lead": {
+        "name": "Danielle Fournier",
+        "pronouns": "she/they",
+        "phone": "+14165550104"
+      },
       "tasks": [
         "Check speakers in on the run-of-show sheet and give them a green badge.",
         "Offer water, snacks and a quiet space. Keep the room calm — no attendees inside.",
@@ -219,19 +368,43 @@
         {
           "question": "A speaker hasn't arrived.",
           "suggest": true,
-          "keywords": ["late", "hasn't arrived", "not here", "no show", "missing speaker", "where is the speaker"],
+          "keywords": [
+            "late",
+            "hasn't arrived",
+            "not here",
+            "no show",
+            "missing speaker",
+            "where is the speaker"
+          ],
           "answer": "Call the number on the run-of-show sheet at 30 minutes before their slot. At 15 minutes, radio Danielle so the moderator can adjust the order."
         },
         {
           "question": "A speaker wants to change their slides.",
           "suggest": true,
-          "keywords": ["slides", "deck", "usb", "file", "presentation", "update", "change"],
+          "keywords": [
+            "slides",
+            "deck",
+            "usb",
+            "file",
+            "presentation",
+            "update",
+            "change"
+          ],
           "answer": "Copy the new file to the USB stick and walk it to the AV booth yourself. After the 30-minute cutoff, check with AV before promising anything."
         },
         {
           "question": "What snacks are available?",
           "suggest": true,
-          "keywords": ["snack", "water", "coffee", "tea", "drink", "dietary", "vegan", "gluten"],
+          "keywords": [
+            "snack",
+            "water",
+            "coffee",
+            "tea",
+            "drink",
+            "dietary",
+            "vegan",
+            "gluten"
+          ],
           "answer": "Water, coffee, tea and a snack tray (vegan and gluten-free options labelled). Ask hotel staff on extension 310 for refills."
         }
       ]
@@ -242,7 +415,11 @@
       "emoji": "🧭",
       "floor": "2nd floor — Room 204",
       "shift": "7:30 AM – 6:00 PM",
-      "lead": { "name": "Jordan Achebe", "pronouns": "he/him", "phone": "+14165550105" },
+      "lead": {
+        "name": "Jordan Achebe",
+        "pronouns": "he/him",
+        "phone": "+14165550105"
+      },
       "tasks": [
         "Sign volunteers in and out on the shift sheet and hand out radios and T-shirts.",
         "Cover breaks: send a floater to any station that radios for one.",
@@ -254,22 +431,446 @@
         {
           "question": "A volunteer didn't show up.",
           "suggest": true,
-          "keywords": ["no show", "didn't show", "absent", "missing volunteer", "short staffed", "cover", "replacement"],
+          "keywords": [
+            "no show",
+            "didn't show",
+            "absent",
+            "missing volunteer",
+            "short staffed",
+            "cover",
+            "replacement"
+          ],
           "answer": "Check the shift sheet for floaters, send one over, and mark the original volunteer as absent. Let the station lead know on Channel 4."
         },
         {
           "question": "We're out of volunteer T-shirts.",
           "suggest": true,
-          "keywords": ["shirt", "t-shirt", "tshirt", "size", "swag", "lanyard"],
+          "keywords": [
+            "shirt",
+            "t-shirt",
+            "tshirt",
+            "size",
+            "swag",
+            "lanyard"
+          ],
           "answer": "Extra boxes are in the storage closet behind HQ (code 2204, sample). If a size is gone, give a volunteer lanyard instead."
         },
         {
           "question": "How do I sign out at end of shift?",
           "suggest": true,
-          "keywords": ["sign out", "end of shift", "leave", "done", "go home", "check out", "hours"],
+          "keywords": [
+            "sign out",
+            "end of shift",
+            "leave",
+            "done",
+            "go home",
+            "check out",
+            "hours"
+          ],
           "answer": "Return your radio, sign the shift sheet with your out-time, and grab your thank-you card. Hours are emailed within a week."
         }
       ]
     }
-  ]
+  ],
+  "myDay": {
+    "_help": "Times are 24-hour HH:MM. Each slot's 'room' must match a room id in 'floors'. 'station' links a role to its station page.",
+    "title": "My day",
+    "intro": "Pick your role to see where to be and when. The map highlights where you should be right now.",
+    "pickRole": "Your role",
+    "now": "Now",
+    "next": "Next",
+    "upNext": "Up next",
+    "beforeStart": "Your day starts at",
+    "allDone": "You're all done for today. Thank you! 💜",
+    "between": "Short break, then",
+    "mapTitle": "Venue map",
+    "mapNote": "Simplified sketch for orientation, not to scale. Elevators are at the centre of every floor.",
+    "clockLabel": "Clock",
+    "demoBadge": "demo",
+    "demoTime": "10:15",
+    "demoNote": "Outside event hours the page uses a demo time. Change it to preview any part of the day.",
+    "useRealTime": "Use real time",
+    "eventHours": {
+      "start": "07:00",
+      "end": "18:00"
+    },
+    "floors": [
+      {
+        "id": "4",
+        "name": "4th floor",
+        "rooms": [
+          {
+            "id": "lounge",
+            "name": "Room 410 — Networking Lounge",
+            "short": "Networking Lounge",
+            "size": 2
+          },
+          {
+            "id": "quiet",
+            "name": "Room 402 — Quiet Room",
+            "short": "Quiet Room",
+            "size": 1
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "3rd floor",
+        "rooms": [
+          {
+            "id": "ballroom",
+            "name": "Victory Ballroom",
+            "short": "Victory Ballroom",
+            "size": 2
+          },
+          {
+            "id": "overflow",
+            "name": "Room 305 — Overflow",
+            "short": "Rm 305 Overflow",
+            "size": 1
+          },
+          {
+            "id": "greenroom",
+            "name": "Room 310 — Speaker Green Room",
+            "short": "Rm 310 Green Room",
+            "size": 1
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "2nd floor",
+        "rooms": [
+          {
+            "id": "hall",
+            "name": "Exhibition Hall B — Career Fair",
+            "short": "Exhibition Hall B",
+            "size": 2
+          },
+          {
+            "id": "foyer",
+            "name": "2nd-floor Foyer — Lunch",
+            "short": "Foyer (lunch)",
+            "size": 1
+          },
+          {
+            "id": "hq",
+            "name": "Room 204 — Volunteer HQ",
+            "short": "Rm 204 HQ",
+            "size": 1
+          }
+        ]
+      },
+      {
+        "id": "G",
+        "name": "Ground floor",
+        "rooms": [
+          {
+            "id": "entrance",
+            "name": "Main Entrance",
+            "short": "Entrance",
+            "size": 1
+          },
+          {
+            "id": "lobby",
+            "name": "Main Lobby — Registration",
+            "short": "Lobby / Registration",
+            "size": 2
+          },
+          {
+            "id": "coat",
+            "name": "Coat & Bag Check",
+            "short": "Coat Check",
+            "size": 1
+          }
+        ]
+      }
+    ],
+    "roles": [
+      {
+        "id": "registration",
+        "name": "Registration",
+        "emoji": "🎟️",
+        "station": "registration",
+        "slots": [
+          {
+            "start": "07:30",
+            "end": "07:40",
+            "title": "Sign in, grab a radio",
+            "room": "hq",
+            "note": "Channel 4 for all leads today."
+          },
+          {
+            "start": "07:40",
+            "end": "08:00",
+            "title": "Set up badge tables",
+            "room": "lobby",
+            "note": "Backup printer goes under table 3."
+          },
+          {
+            "start": "08:00",
+            "end": "10:00",
+            "title": "Badge pick-up — morning rush",
+            "room": "lobby",
+            "note": "Doors open 15 min earlier than yesterday."
+          },
+          {
+            "start": "10:00",
+            "end": "11:30",
+            "title": "Late arrivals & help desk",
+            "room": "lobby"
+          },
+          {
+            "start": "11:30",
+            "end": "12:00",
+            "title": "Hand over to afternoon desk",
+            "room": "lobby",
+            "note": "Walk your replacement through the walk-in process."
+          },
+          {
+            "start": "12:00",
+            "end": "12:45",
+            "title": "Lunch",
+            "room": "foyer"
+          },
+          {
+            "start": "12:45",
+            "end": "13:00",
+            "title": "Return radio & sign out",
+            "room": "hq"
+          }
+        ]
+      },
+      {
+        "id": "career-fair",
+        "name": "Career Fair",
+        "emoji": "💼",
+        "station": "career-fair",
+        "slots": [
+          {
+            "start": "08:30",
+            "end": "08:40",
+            "title": "Sign in, grab a radio",
+            "room": "hq"
+          },
+          {
+            "start": "08:40",
+            "end": "09:00",
+            "title": "Booth check & map update",
+            "room": "hall",
+            "note": "Northlake Bank moved to booth 22."
+          },
+          {
+            "start": "09:00",
+            "end": "11:30",
+            "title": "Fair floor — wayfinding & aisles",
+            "room": "hall"
+          },
+          {
+            "start": "11:30",
+            "end": "12:15",
+            "title": "Lunch",
+            "room": "foyer"
+          },
+          {
+            "start": "12:15",
+            "end": "15:15",
+            "title": "Résumé-review line & restocking",
+            "room": "hall",
+            "note": "Restock water every hour."
+          },
+          {
+            "start": "15:15",
+            "end": "15:30",
+            "title": "15-minute wrap-up call to recruiters",
+            "room": "hall"
+          },
+          {
+            "start": "15:30",
+            "end": "15:45",
+            "title": "Return radio & sign out",
+            "room": "hq"
+          }
+        ]
+      },
+      {
+        "id": "ballroom",
+        "name": "Ballroom",
+        "emoji": "🎤",
+        "station": "victory-ballroom",
+        "slots": [
+          {
+            "start": "08:30",
+            "end": "08:45",
+            "title": "Sign in, grab a radio",
+            "room": "hq"
+          },
+          {
+            "start": "08:45",
+            "end": "09:45",
+            "title": "Seating & door set-up",
+            "room": "ballroom",
+            "note": "Reserve the front row for speakers."
+          },
+          {
+            "start": "09:45",
+            "end": "11:30",
+            "title": "Keynote — door & seating",
+            "room": "ballroom",
+            "note": "Keynote moved to 10:00."
+          },
+          {
+            "start": "11:30",
+            "end": "12:15",
+            "title": "Lunch",
+            "room": "foyer"
+          },
+          {
+            "start": "12:15",
+            "end": "13:30",
+            "title": "Overflow room livestream check",
+            "room": "overflow"
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "title": "Afternoon panels — mic runner",
+            "room": "ballroom"
+          },
+          {
+            "start": "16:30",
+            "end": "17:00",
+            "title": "Reset the room",
+            "room": "ballroom"
+          },
+          {
+            "start": "17:00",
+            "end": "17:15",
+            "title": "Return radio & sign out",
+            "room": "hq"
+          }
+        ]
+      },
+      {
+        "id": "green-room",
+        "name": "Green Room",
+        "emoji": "🌿",
+        "station": "green-room",
+        "slots": [
+          {
+            "start": "08:00",
+            "end": "08:10",
+            "title": "Sign in, grab a radio",
+            "room": "hq"
+          },
+          {
+            "start": "08:10",
+            "end": "09:15",
+            "title": "Set up green room & snacks",
+            "room": "greenroom"
+          },
+          {
+            "start": "09:15",
+            "end": "10:00",
+            "title": "Keynote run-through",
+            "room": "ballroom",
+            "note": "Bring the keynote speaker to stage."
+          },
+          {
+            "start": "10:00",
+            "end": "11:30",
+            "title": "Host speakers, collect slides",
+            "room": "greenroom"
+          },
+          {
+            "start": "11:30",
+            "end": "12:15",
+            "title": "Lunch",
+            "room": "foyer"
+          },
+          {
+            "start": "12:15",
+            "end": "15:45",
+            "title": "Speaker check-in & stage escorts",
+            "room": "greenroom",
+            "note": "Walk each speaker over 10 min before their slot."
+          },
+          {
+            "start": "15:45",
+            "end": "16:00",
+            "title": "Return radio & sign out",
+            "room": "hq"
+          }
+        ]
+      },
+      {
+        "id": "floater",
+        "name": "Floater",
+        "emoji": "🧭",
+        "station": "volunteer-hq",
+        "slots": [
+          {
+            "start": "07:30",
+            "end": "07:40",
+            "title": "Sign in, grab a radio",
+            "room": "hq"
+          },
+          {
+            "start": "07:40",
+            "end": "08:30",
+            "title": "Help with the registration rush",
+            "room": "lobby"
+          },
+          {
+            "start": "08:30",
+            "end": "10:00",
+            "title": "Career Fair set-up support",
+            "room": "hall"
+          },
+          {
+            "start": "10:00",
+            "end": "11:00",
+            "title": "Check Quiet Room & Networking Lounge",
+            "room": "quiet"
+          },
+          {
+            "start": "11:00",
+            "end": "11:30",
+            "title": "Cover break requests",
+            "room": "hq"
+          },
+          {
+            "start": "11:30",
+            "end": "12:15",
+            "title": "Lunch",
+            "room": "foyer"
+          },
+          {
+            "start": "12:15",
+            "end": "13:30",
+            "title": "Cover lunch breaks at Registration",
+            "room": "lobby"
+          },
+          {
+            "start": "13:30",
+            "end": "15:00",
+            "title": "Networking Lounge host",
+            "room": "lounge"
+          },
+          {
+            "start": "15:00",
+            "end": "17:00",
+            "title": "Lost & found and break cover",
+            "room": "hq"
+          },
+          {
+            "start": "17:00",
+            "end": "17:15",
+            "title": "Return radio & sign out",
+            "room": "hq"
+          }
+        ]
+      }
+    ]
+  }
 }
