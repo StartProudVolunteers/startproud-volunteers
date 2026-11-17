@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Station · OOBS Volunteer Assistant</title>
+  <meta name="theme-color" content="#1b1440">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="station">
+  <div class="pride-bar" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="back" href="index.html">← <span data-text="ui.backHome"></span></a>
+    <button class="btn btn-catchup btn-small" type="button" data-catchup></button>
+  </header>
+
+  <main class="wrap" id="station">
+    <section class="station-head">
+      <span class="station-emoji" id="st-emoji" aria-hidden="true"></span>
+      <div>
+        <p class="eyebrow" data-text="event.name"></p>
+        <h1 id="st-name"></h1>
+      </div>
+    </section>
+
+    <section class="facts">
+      <div class="fact">
+        <span class="fact-label" data-text="ui.floor"></span>
+        <span class="fact-value" id="st-floor"></span>
+      </div>
+      <div class="fact">
+        <span class="fact-label" data-text="ui.shift"></span>
+        <span class="fact-value" id="st-shift"></span>
+      </div>
+      <div class="fact fact-lead">
+        <span class="fact-label" data-text="ui.yourLead"></span>
+        <span class="fact-value"><span id="st-lead"></span> <span class="pronouns" id="st-pronouns"></span></span>
+        <a class="btn btn-outline btn-small" id="st-lead-msg" href="#">💬 <span data-text="ui.fallbackButton"></span></a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-text="ui.whatToDo"></h2>
+      <ol class="tasks" id="st-tasks"></ol>
+    </section>
+
+    <section class="card chat" aria-labelledby="chat-title">
+      <h2 id="chat-title">💬 <span data-text="ui.askTitle"></span></h2>
+      <p class="muted" data-text="ui.askIntro"></p>
+      <div class="chat-log" id="chat-log" aria-live="polite"></div>
+      <div class="suggestions" id="suggestions"></div>
+      <form class="chat-form" id="chat-form" autocomplete="off">
+        <label class="sr-only" for="chat-input" data-text="ui.askTitle"></label>
+        <input id="chat-input" type="text" enterkeyhint="send">
+        <button class="btn" type="submit" data-text="ui.send"></button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer" data-text="ui.footer"></footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>
