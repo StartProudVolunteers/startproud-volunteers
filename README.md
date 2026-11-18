@@ -10,7 +10,8 @@ No backend, no build step: plain HTML, CSS and JavaScript.
 
 | File | What it is |
 |---|---|
-| `index.html` | Home page: event header, **Catch me up**, list of stations |
+| `index.html` | Home: header, **Ask anything** box, **⚡ Catch me up**, and three big buttons: *Where do I go?*, *Call my lead*, *An attendee asked me…* |
+| `stations.html` | The station list (linked from "Stations" on the home page) |
 | `station.html?id=…` | One template for all 5 stations (`registration`, `career-fair`, `victory-ballroom`, `green-room`, `volunteer-hq`) |
 | `my-day.html?role=…` | **My day**: pick a role, see a personal timeline and a stacked-floor venue map with your current room highlighted |
 | `data/content.json` | **Every word in the app.** Edit this, not the code. |
@@ -24,16 +25,20 @@ No backend, no build step: plain HTML, CSS and JavaScript.
 Open `data/content.json` on GitHub, click the ✏️ pencil, edit, then **Commit changes**.
 The live site updates in about a minute.
 
+- **Keep answers short**: two short lines on a phone, about 65 characters. Longer answers wrap to a third line.
+- **`ui.header`**, **`ui.home`**: the home header and the big-button labels.
+- **"My station"**: the phone remembers the last station page a volunteer opened (or the lead they
+  picked). "Call my lead" and the home Ask box use it. Before that, "Call my lead" shows a list of leads.
 - **`catchUp.lines`**: the 5 lines in "Catch me up". Change `catchUp.updated` too.
 - **`stations[].tasks`**: the "What to do here" list.
 - **`stations[].lead`**: lead's name, pronouns and phone (the Message button opens a text to it).
 - **`stations[].answers`**: the station's Ask OOBS answers.
-  - `question`: shown as a tap button when `"suggest": true`.
+  - `question`: shown as a tap button when `"suggest": true` (max 3 per station).
   - `keywords`: lowercase words or short phrases. If a typed question contains one, the answer can match.
     The answer with the most keyword hits wins; station answers beat general ones on a tie.
   - `answer`: what the bot says.
 - **`globalAnswers`**: answers every station can give (Start Proud, code of conduct, sponsors,
-  washrooms, Wi-Fi, lunch, …). Ones with `"suggest": true` appear as "Attendees often ask" buttons.
+  washrooms, Wi-Fi, lunch, …). Ones with `"suggest": true` appear under "An attendee asked me…" on the home page.
 - **Safety answers** (`"escalate": true`: first aid, harassment, feeling unsafe) always win over
   other matches. They show a red "Find the Volunteer Lead at HQ now" card with a call button.
   The name, location and phone number come from **`escalation`**.

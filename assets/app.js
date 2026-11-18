@@ -38,9 +38,10 @@
     if (entry.question && normalize(entry.question) === q) s += 100;
     return s;
   }
-  function findAnswer(question, station, globals) {
-    var pool = (station.answers || []).map(function (a) { return { a: a, bonus: 0.5 }; })
-      .concat((globals || []).map(function (a) { return { a: a, bonus: 0 }; }));
+  // primary answers (your station) get a small bonus over the rest
+  function findAnswer(question, primary, others) {
+    var pool = (primary || []).map(function (a) { return { a: a, bonus: 0.5 }; })
+      .concat((others || []).map(function (a) { return { a: a, bonus: 0 }; }));
     var best = null, bestScore = 0;
     pool.forEach(function (p) {
       var sc = score(question, p.a);
@@ -58,41 +59,180 @@
       if (v != null) n.textContent = v;
     });
   }
-  function leadLink(lead) {
-    // sms: opens the phone's messaging app with the lead's (sample) number.
-    return "sms:" + (lead && lead.phone ? lead.phone : "");
+  function byId(id) { return document.getElementById(id); }
+  function stationById(data, id) { return data.stations.filter(function (x) { return x.id === id; })[0] || null; }
+  // "My station" is remembered on this phone once a volunteer opens a station page or picks a lead.
+  function myStation(data) { return stationById(data, store("oobs-station")); }
+  function setMyStation(id) { store("oobs-station", id); }
+
+  // Bottom sheet used for Catch me up, the lead picker and attendee questions.
+  function makeSheet(closeText) {
+    var backdrop = el("div", { "class": "sheet-backdrop", hidden: "" });
+    var sheet = el("div", { "class": "sheet", role: "dialog", "aria-modal": "true" });
+    var body = el("div");
+    var close = el("button", { "class": "btn", type: "button" }, closeText);
+    sheet.appendChild(body); sheet.appendChild(close); backdrop.appendChild(sheet);
+    document.body.appendChild(backdrop);
+    var opener = null;
+    function shut() { backdrop.hidden = true; if (opener && opener.focus) opener.focus(); }
+    close.addEventListener("click", shut);
+    backdrop.addEventListener("click", function (e) { if (e.target === backdrop) shut(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !backdrop.hidden) shut(); });
+    return {
+      body: body,
+      open: function (from) { opener = from || null; backdrop.hidden = false; close.focus(); },
+      close: function () { opener = null; backdrop.hidden = true; }
+    };
   }
 
   function setupCatchUp(data) {
     var c = data.catchUp || {};
-    var backdrop = el("div", { "class": "sheet-backdrop", hidden: "" });
-    var sheet = el("div", { "class": "sheet", role: "dialog", "aria-modal": "true", "aria-labelledby": "cu-title" });
-    sheet.appendChild(el("h2", { id: "cu-title" }, "⚡ " + (c.title || "")));
-    sheet.appendChild(el("p", { "class": "updated" }, c.updated || ""));
+    var sh = makeSheet(data.ui.catchUpClose);
+    sh.body.appendChild(el("h2", null, "⚡ " + (c.title || "")));
+    sh.body.appendChild(el("p", { "class": "updated" }, c.updated || ""));
     var ol = el("ol");
     (c.lines || []).slice(0, 5).forEach(function (line) { ol.appendChild(el("li", null, line)); });
-    sheet.appendChild(ol);
-    var close = el("button", { "class": "btn", type: "button" }, data.ui.catchUpClose);
-    sheet.appendChild(close);
-    backdrop.appendChild(sheet);
-    document.body.appendChild(backdrop);
-
-    var opener = null;
-    function open(e) { opener = e.currentTarget; backdrop.hidden = false; close.focus(); }
-    function shut() { backdrop.hidden = true; if (opener) opener.focus(); }
-    close.addEventListener("click", shut);
-    backdrop.addEventListener("click", function (e) { if (e.target === backdrop) shut(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !backdrop.hidden) shut(); });
-
+    sh.body.appendChild(ol);
     document.querySelectorAll("[data-catchup]").forEach(function (b) {
       b.textContent = "⚡ " + data.ui.catchUpButton;
-      b.addEventListener("click", open);
+      b.addEventListener("click", function () { sh.open(b); });
     });
   }
 
+  // Lead picker: "tel" to call, "sms" to message. Picking a row remembers that station.
+  var leadSheet = null;
+  function pickLead(data, kind, from) {
+    var t = data.ui.pickLead;
+    if (!leadSheet) leadSheet = makeSheet(data.ui.close);
+    var b = leadSheet.body;
+    b.innerHTML = "";
+    b.appendChild(el("h2", null, t.title));
+    b.appendChild(el("p", { "class": "updated" }, t.intro));
+    var ul = el("ul", { "class": "lead-list" });
+    data.stations.forEach(function (s) {
+      var li = el("li");
+      var txt = el("span");
+      txt.appendChild(el("strong", null, (s.emoji || "") + " " + s.name));
+      txt.appendChild(el("small", null, s.lead.name));
+      li.appendChild(txt);
+      var a = el("a", { "class": "btn btn-small", href: kind + ":" + s.lead.phone },
+        (kind === "tel" ? "📞 " + t.call : "💬 " + t.message));
+      a.addEventListener("click", function () { setMyStation(s.id); });
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    b.appendChild(ul);
+    leadSheet.open(from);
+  }
+
+  // Ask box shared by the home page and station pages.
+  // opts.primary(): answers to prefer; opts.others(): the rest; opts.lead(): lead or null.
+  function setupChat(data, opts) {
+    var log = byId("chat-log"), form = byId("chat-form"), input = byId("chat-input");
+    input.placeholder = opts.placeholder || data.ui.askPlaceholder;
+
+    function say(text, who, extra) {
+      var b = el("div", { "class": "msg msg-" + who + (extra ? " " + extra : "") }, text);
+      log.appendChild(b);
+      b.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      return b;
+    }
+    function ask(q) {
+      q = String(q).trim();
+      if (!q) return;
+      say(q, "me");
+      var hit = findAnswer(q, opts.primary(), opts.others());
+      if (hit && hit.escalate) {
+        var esc = data.escalation || {};
+        var u = say("", "bot", "msg-urgent");
+        u.appendChild(el("strong", { "class": "urgent-head" }, "🚨 " + esc.headline));
+        if (esc.where) u.appendChild(el("span", { "class": "urgent-where" }, esc.where + (esc.name ? " · " + esc.name : "")));
+        u.appendChild(el("span", { "class": "urgent-body" }, hit.answer));
+        u.appendChild(el("a", { "class": "btn btn-urgent", href: "tel:" + (esc.phone || "") }, "📞 " + esc.callButton));
+        return;
+      }
+      if (hit) { say(hit.answer, "bot"); return; }
+      var f = say(data.ui.fallback, "bot", "msg-unsure");
+      f.appendChild(el("br"));
+      var lead = opts.lead();
+      if (lead) {
+        f.appendChild(el("a", { "class": "btn btn-small", href: "sms:" + lead.phone },
+          "💬 " + data.ui.fallbackButton + " " + lead.name));
+      } else {
+        var pb = el("button", { "class": "btn btn-small", type: "button" }, "💬 " + data.ui.messageYourLead);
+        pb.addEventListener("click", function () { pickLead(data, "sms", pb); });
+        f.appendChild(pb);
+      }
+    }
+    form.addEventListener("submit", function (e) { e.preventDefault(); ask(input.value); input.value = ""; });
+
+    var sugg = byId("suggestions");
+    if (sugg && opts.suggested) {
+      opts.suggested.slice(0, 3).forEach(function (a) {   // max 3 suggested questions
+        var chip = el("button", { "class": "chip", type: "button" }, a.question);
+        chip.addEventListener("click", function () { ask(a.question); });
+        sugg.appendChild(chip);
+      });
+    }
+    return { ask: ask, input: input };
+  }
+
   /* ---------- home ---------- */
+  function bigButton(tag, attrs, emoji, label, sub) {
+    var n = el(tag, attrs);
+    n.classList.add("big-btn");
+    n.appendChild(el("span", { "class": "big-emoji", "aria-hidden": "true" }, emoji));
+    var t = el("span", { "class": "big-text" });
+    t.appendChild(el("strong", null, label));
+    if (sub) t.appendChild(el("small", null, sub));
+    n.appendChild(t);
+    return n;
+  }
   function renderHome(data) {
-    var list = document.getElementById("station-list");
+    var h = data.ui.home, mine = myStation(data);
+    var chat = setupChat(data, {
+      placeholder: h.askPlaceholder,
+      primary: function () { var m = myStation(data); return m ? m.answers : []; },
+      others: function () {
+        var m = myStation(data);
+        return data.globalAnswers.concat.apply(data.globalAnswers,
+          data.stations.filter(function (s) { return s !== m; }).map(function (s) { return s.answers || []; }));
+      },
+      lead: function () { var m = myStation(data); return m ? m.lead : null; }
+    });
+
+    var box = byId("big-buttons");
+    var role = mine && data.myDay.roles.filter(function (r) { return r.station === mine.id; })[0];
+    box.appendChild(bigButton("a", { href: "my-day.html" + (role ? "?role=" + encodeURIComponent(role.id) : "") },
+      "🧭", h.where.label, h.where.sub));
+
+    var call;
+    if (mine) {
+      call = bigButton("a", { href: "tel:" + mine.lead.phone }, "📞", h.call.label, mine.lead.name + " · " + mine.name);
+    } else {
+      call = bigButton("button", { type: "button" }, "📞", h.call.label, h.call.subUnknown);
+      call.addEventListener("click", function () { pickLead(data, "tel", call); });
+    }
+    box.appendChild(call);
+
+    var att = bigButton("button", { type: "button" }, "🙋", h.attendee.label, h.attendee.sub);
+    var attSheet = makeSheet(data.ui.close);
+    attSheet.body.appendChild(el("h2", null, "🙋 " + h.attendee.label));
+    attSheet.body.appendChild(el("p", { "class": "updated" }, h.attendee.intro));
+    var row = el("div", { "class": "sheet-chips" });
+    data.globalAnswers.filter(function (a) { return a.suggest; }).forEach(function (a) {
+      var c = el("button", { "class": "chip", type: "button" }, a.question);
+      c.addEventListener("click", function () { attSheet.close(); chat.ask(a.question); });
+      row.appendChild(c);
+    });
+    attSheet.body.appendChild(row);
+    att.addEventListener("click", function () { attSheet.open(att); });
+    box.appendChild(att);
+  }
+
+  /* ---------- stations list ---------- */
+  function renderStations(data) {
+    var list = byId("station-list");
     data.stations.forEach(function (s) {
       var li = el("li");
       var a = el("a", { "class": "station-link", href: "station.html?id=" + encodeURIComponent(s.id) });
@@ -109,88 +249,36 @@
 
   /* ---------- station ---------- */
   function renderStation(data) {
-    var id = new URLSearchParams(location.search).get("id");
-    var s = data.stations.filter(function (x) { return x.id === id; })[0];
-    if (!s) { location.replace("index.html"); return; }
+    var s = stationById(data, new URLSearchParams(location.search).get("id"));
+    if (!s) { location.replace("stations.html"); return; }
+    setMyStation(s.id);
 
-    document.title = s.name + " · " + data.event.shortName + " Volunteer";
-    document.getElementById("st-emoji").textContent = s.emoji || "📍";
-    document.getElementById("st-name").textContent = s.name;
-    document.getElementById("st-floor").textContent = s.floor;
-    document.getElementById("st-shift").textContent = s.shift || "—";
-    document.getElementById("st-lead").textContent = s.lead.name;
-    document.getElementById("st-pronouns").textContent = s.lead.pronouns ? "(" + s.lead.pronouns + ")" : "";
-    var msg = document.getElementById("st-lead-msg");
-    msg.href = leadLink(s.lead);
-    msg.querySelector("span").textContent = data.ui.fallbackButton + " " + s.lead.name.split(" ")[0];
+    document.title = s.name + " · " + data.ui.header;
+    byId("st-emoji").textContent = s.emoji || "📍";
+    byId("st-name").textContent = s.name;
+    byId("st-floor").textContent = s.floor;
+    byId("st-shift").textContent = s.shift || "—";
+    byId("st-lead").textContent = s.lead.name;
+    byId("st-pronouns").textContent = s.lead.pronouns ? "(" + s.lead.pronouns + ")" : "";
+    var msg = byId("st-lead-msg");
+    msg.href = "sms:" + s.lead.phone;
+    msg.textContent = "💬 " + data.ui.fallbackButton + " " + s.lead.name.split(" ")[0];
 
     // "See it on the map": per-station mapUrl, else the shared placeholder template
     var mapUrl = s.mapUrl || ((data.links && data.links.mapUrl) || "").replace("{station}", encodeURIComponent(s.id));
-    var mapBtn = document.getElementById("st-map");
+    var mapBtn = byId("st-map");
     if (mapUrl) { mapBtn.href = mapUrl; mapBtn.textContent = "🗺️ " + data.ui.mapButton + " ↗"; } else mapBtn.hidden = true;
 
-    var tasks = document.getElementById("st-tasks");
+    var tasks = byId("st-tasks");
     s.tasks.forEach(function (t) { tasks.appendChild(el("li", null, t)); });
 
-    // chat
-    var log = document.getElementById("chat-log");
-    var form = document.getElementById("chat-form");
-    var input = document.getElementById("chat-input");
-    input.placeholder = data.ui.askPlaceholder;
-
-    function say(text, who, extra) {
-      var b = el("div", { "class": "msg msg-" + who + (extra ? " " + extra : "") }, text);
-      log.appendChild(b);
-      b.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      return b;
-    }
-    function ask(q) {
-      q = q.trim();
-      if (!q) return;
-      say(q, "me");
-      var hit = findAnswer(q, s, data.globalAnswers);
-      if (hit && hit.escalate) {
-        var esc = data.escalation || {};
-        var u = say("", "bot", "msg-urgent");
-        u.appendChild(el("strong", { "class": "urgent-head" }, "🚨 " + esc.headline));
-        if (esc.where) u.appendChild(el("span", { "class": "urgent-where" }, esc.where + (esc.name ? " · " + esc.name : "")));
-        u.appendChild(el("span", { "class": "urgent-body" }, hit.answer));
-        u.appendChild(el("a", { "class": "btn btn-urgent", href: "tel:" + (esc.phone || "") }, "📞 " + esc.callButton));
-        return;
-      }
-      if (hit) { say(hit.answer, "bot"); return; }
-      {
-        var b = say(data.ui.fallback, "bot", "msg-unsure");
-        b.appendChild(el("br"));
-        var a = el("a", { "class": "btn btn-small", href: leadLink(s.lead) },
-          "💬 " + data.ui.fallbackButton + " " + s.lead.name);
-        b.appendChild(a);
-      }
-    }
-    form.addEventListener("submit", function (e) { e.preventDefault(); ask(input.value); input.value = ""; });
-
-    var sugg = document.getElementById("suggestions");
-    var suggested = (s.answers || []).filter(function (a) { return a.suggest; });
-    suggested.forEach(function (a) {
-      var chip = el("button", { "class": "chip", type: "button" }, a.question);
-      chip.addEventListener("click", function () { ask(a.question); });
-      sugg.appendChild(chip);
+    setupChat(data, {
+      primary: function () { return s.answers; },
+      others: function () { return data.globalAnswers; },
+      lead: function () { return s.lead; },
+      suggested: (s.answers || []).filter(function (a) { return a.suggest; })
     });
-    // org / attendee questions shared by every station
-    var org = (data.globalAnswers || []).filter(function (a) { return a.suggest; });
-    if (org.length) {
-      var orgBox = document.getElementById("org-suggestions");
-      orgBox.appendChild(el("p", { "class": "fact-label sugg-label" }, data.ui.orgSuggestTitle));
-      var row = el("div", { "class": "suggestions" });
-      org.forEach(function (a) {
-        var chip = el("button", { "class": "chip chip-org", type: "button" }, a.question);
-        chip.addEventListener("click", function () { ask(a.question); });
-        row.appendChild(chip);
-      });
-      orgBox.appendChild(row);
-    }
   }
-
 
   /* ---------- my day ---------- */
   function toMin(t) { var p = String(t).split(":"); return (+p[0]) * 60 + (+p[1]); }
@@ -265,7 +353,8 @@
   function renderMyDay(data) {
     var md = data.myDay;
     var params = new URLSearchParams(location.search);
-    var roleId = params.get("role") || store("oobs-role") || md.roles[0].id;
+    var fromStation = md.roles.filter(function (r) { return r.station === store("oobs-station"); })[0];
+    var roleId = params.get("role") || store("oobs-role") || (fromStation && fromStation.id) || md.roles[0].id;
     if (!md.roles.some(function (r) { return r.id === roleId; })) roleId = md.roles[0].id;
     var picked = null;           // slot index the user tapped (overrides "now" on the map)
     var manualClock = null;      // minutes, when the user set the clock
@@ -285,7 +374,7 @@
     md.roles.forEach(function (r) {
       var b = el("button", { "class": "chip role-chip", type: "button", "data-role": r.id }, (r.emoji || "") + " " + r.name);
       b.addEventListener("click", function () {
-        roleId = r.id; picked = null; store("oobs-role", r.id);
+        roleId = r.id; picked = null; store("oobs-role", r.id); if (r.station) setMyStation(r.station);
         history.replaceState(null, "", "?role=" + encodeURIComponent(r.id));
         render();
       });
@@ -379,7 +468,7 @@
     var role = stationId && data.myDay.roles.filter(function (r) { return r.station === stationId; })[0];
     document.querySelectorAll("[data-myday]").forEach(function (a) {
       a.href = "my-day.html" + (role ? "?role=" + encodeURIComponent(role.id) : "");
-      a.textContent = "🗓️ " + data.ui.myDay;
+      a.textContent = "🗓️ " + data.ui.myDay;   // only small top-bar links use data-myday
     });
   }
 
@@ -391,6 +480,7 @@
       setupCatchUp(data);
       var page = document.body.getAttribute("data-page");
       if (page === "home") renderHome(data);
+      if (page === "stations") renderStations(data);
       if (page === "station") renderStation(data);
       if (page === "myday") renderMyDay(data);
       addMyDayLinks(data, page === "station" ? new URLSearchParams(location.search).get("id") : null);

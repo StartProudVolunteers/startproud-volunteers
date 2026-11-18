@@ -3,29 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>OOBS Volunteer Assistant</title>
-  <meta name="description" content="Concept demo volunteer assistant for Out on Bay Street.">
-  <meta name="theme-color" content="#1b1440">
+  <title>Start Proud volunteer assistant, concept by Team B</title>
+  <meta name="description" content="Concept demo volunteer assistant for Out on Bay Street. Not an official Start Proud tool.">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="home">
   <div class="pride-bar" aria-hidden="true"></div>
-  <header class="hero">
-    <p class="eyebrow" data-text="event.venue"></p>
-    <h1 data-text="event.name"></h1>
-    <p class="sub" data-text="event.dates"></p>
-    <p class="lede" data-text="event.tagline"></p>
-    <div class="hero-actions">
-      <button class="btn btn-catchup" type="button" data-catchup></button>
-      <a class="btn btn-ghost" data-myday href="my-day.html">My day</a>
-    </div>
+  <header class="app-header">
+    <h1 data-text="ui.header"></h1>
+    <p class="event-line"><span data-text="event.name"></span> · <span data-text="event.dates"></span> · <span data-text="event.venue"></span></p>
   </header>
 
-  <main class="wrap">
-    <h2 class="section-title" data-text="ui.homeHeading"></h2>
-    <ul class="station-list" id="station-list"></ul>
-    <p class="note" data-text="ui.allStationsNote"></p>
+  <main class="wrap home">
+    <section class="card chat" aria-labelledby="ask-title">
+      <h2 id="ask-title" data-text="ui.home.askTitle"></h2>
+      <form class="chat-form" id="chat-form" autocomplete="off">
+        <label class="sr-only" for="chat-input" data-text="ui.home.askTitle"></label>
+        <input id="chat-input" type="text" enterkeyhint="send">
+        <button class="btn" type="submit" data-text="ui.send"></button>
+      </form>
+      <div class="chat-log" id="chat-log" aria-live="polite"></div>
+    </section>
+
+    <button class="btn btn-catchup btn-block" type="button" data-catchup></button>
+
+    <nav class="big-buttons" id="big-buttons" aria-label="Quick actions"></nav>
+
+    <p class="stations-link"><a href="stations.html" data-text="ui.home.stationsLink"></a></p>
   </main>
 
   <footer class="footer" data-text="ui.footer"></footer>

@@ -1,42 +1,65 @@
 {
-  "_readme": "EDIT THIS FILE to change any text in the app. Keep the quotes and commas. Keywords are lowercase words or short phrases; if a volunteer's question contains one, that answer can match. 'suggest': true shows the question as a tap button. All names, numbers and details are invented sample data.",
+  "_readme": "EDIT THIS FILE to change any text in the app. Keep the quotes and commas. Keep each answer to two short lines (about 70 characters). Keywords are lowercase words or short phrases; if a question contains one, that answer can match. Up to 3 station answers with \"suggest\": true show as tap buttons. All names, numbers and details are invented sample data.",
   "event": {
     "name": "Out on Bay Street",
     "shortName": "OOBS",
     "venue": "Hotel X Toronto",
-    "dates": "April 30 – May 1, 2027",
-    "tagline": "Your volunteer assistant. Pick your station to see what to do, who your lead is, and quick answers."
+    "dates": "April 30 – May 1, 2027"
   },
   "ui": {
-    "homeHeading": "Where are you volunteering?",
+    "homeHeading": "Pick your station. This phone will remember it.",
     "whatToDo": "What to do here",
     "yourLead": "Your lead",
     "floor": "Floor",
     "shift": "Shift",
     "askTitle": "Ask OOBS",
-    "askIntro": "Ask a question or tap one below. Answers are pre-written by the volunteer team.",
-    "askPlaceholder": "e.g. Where do speakers check in?",
+    "askPlaceholder": "e.g. Where's lunch?",
     "send": "Ask",
     "fallback": "I'm not sure, message your lead.",
     "fallbackButton": "Message",
     "catchUpButton": "Catch me up",
     "catchUpClose": "Got it",
-    "backHome": "All stations",
-    "allStationsNote": "Bookmark your station or scan the QR card at your table.",
+    "backHome": "Home",
     "footer": "Concept demo by Team B, not an official Start Proud tool.",
     "myDay": "My day",
-    "orgSuggestTitle": "Attendees often ask",
-    "mapButton": "See it on the map"
+    "mapButton": "See it on the map",
+    "header": "Start Proud volunteer assistant, concept by Team B",
+    "messageYourLead": "Message your lead",
+    "home": {
+      "askTitle": "Ask anything",
+      "askPlaceholder": "e.g. Where's the coat check?",
+      "where": {
+        "label": "Where do I go?",
+        "sub": "Your timeline and venue map"
+      },
+      "call": {
+        "label": "Call my lead",
+        "subUnknown": "Pick your station first"
+      },
+      "attendee": {
+        "label": "An attendee asked me…",
+        "sub": "Quick answers to common questions",
+        "intro": "Tap the question they asked."
+      },
+      "stationsLink": "Stations"
+    },
+    "pickLead": {
+      "title": "Who's your lead?",
+      "intro": "Pick your station. This phone will remember it.",
+      "call": "Call",
+      "message": "Message"
+    },
+    "close": "Close"
   },
   "catchUp": {
     "title": "Today's changes",
     "updated": "Updated 7:45 AM",
     "lines": [
-      "Doors open at 8:00 AM (15 min earlier than yesterday) — Registration staffed by 7:40.",
-      "Keynote moved from 9:30 to 10:00 AM in Victory Ballroom; speaker run-through at 9:15.",
-      "Career Fair booth 14 (Northlake Bank) swapped with booth 22 — updated maps are at the entrance.",
-      "Lunch is now in the 2nd-floor Foyer, not the Ballroom. Dietary tags are colour-coded.",
-      "Lost & found is now at Volunteer HQ only. Radio channel for all leads is Channel 4."
+      "Doors open 8:00 AM, 15 min earlier. Registration staffed by 7:40.",
+      "Keynote moved to 10:00 AM. Speaker run-through at 9:15.",
+      "Northlake Bank moved from booth 14 to booth 22.",
+      "Lunch is in the 2nd-floor Foyer, not the Ballroom.",
+      "Lost & found is at Volunteer HQ only. Leads are on Channel 4."
     ]
   },
   "globalAnswers": [
@@ -56,7 +79,7 @@
         "what is oobs",
         "what is out on bay street"
       ],
-      "answer": "Start Proud is a Canadian non-profit that connects LGBTQ+ students and early-career professionals with employers and mentors. Out on Bay Street is its flagship conference. For more detail, point people to the Start Proud website or the info desk at Registration."
+      "answer": "A non-profit linking LGBTQ+ students and employers. Runs OOBS."
     },
     {
       "question": "What's the code of conduct?",
@@ -70,7 +93,7 @@
         "behavior",
         "respect"
       ],
-      "answer": "In short: respect everyone's identity, names and pronouns; no harassment, discrimination or unwanted contact; ask before taking photos of people. The full Code of Conduct is printed on the back of every badge (sample). If someone reports a problem, don't investigate it yourself; find the Volunteer Lead at HQ."
+      "answer": "Respect names and pronouns. No harassment. Full code is on badges."
     },
     {
       "question": "Who are the sponsors?",
@@ -84,7 +107,7 @@
         "funded",
         "funding"
       ],
-      "answer": "Placeholder list: Platinum: Sponsor A. Gold: Sponsor B and Sponsor C. Community partners: Sponsor D, Sponsor E. Most sponsors have a booth at the Career Fair (2nd floor, Exhibition Hall B)."
+      "answer": "Placeholder names: Sponsor A, Sponsor B and Sponsor C."
     },
     {
       "question": "Where's the all-gender washroom?",
@@ -101,7 +124,7 @@
         "nonbinary",
         "non-binary"
       ],
-      "answer": "All-gender washrooms are on every floor, right next to the elevators. Accessible washrooms are on the Ground and 3rd floors beside the stairwell. Anyone can use whichever washroom fits them best."
+      "answer": "All-gender washrooms are by the elevators on every floor."
     },
     {
       "question": "Someone needs first aid.",
@@ -123,7 +146,7 @@
         "collapsed",
         "seizure"
       ],
-      "answer": "Don't treat it yourself. Stay with the person and send someone (or call) for the Volunteer Lead, who will bring the trained first-aider. If someone's life is in danger, call 911 first."
+      "answer": "Stay with them and get the lead. Life in danger? Call 911 first."
     },
     {
       "question": "Someone is being harassed.",
@@ -140,7 +163,7 @@
         "discrimination",
         "slur"
       ],
-      "answer": "Don't confront anyone or try to sort it out yourself. Check the person is OK, offer to walk with them, and get the Volunteer Lead right away."
+      "answer": "Don't step in yourself. Check they're OK and get the lead."
     },
     {
       "question": "Someone feels unsafe.",
@@ -158,7 +181,7 @@
         "suspicious",
         "weapon"
       ],
-      "answer": "Your job is to get help, not to handle it. Move yourself and others away if needed and get the Volunteer Lead right away. If someone's life is in danger, call 911 first."
+      "answer": "Move away from danger and get the lead. Life at risk? Call 911."
     },
     {
       "question": "What's the Wi-Fi?",
@@ -169,7 +192,7 @@
         "password",
         "network"
       ],
-      "answer": "Network: OOBS-Guest · Password: ProudTogether26 (sample). Volunteers can use the same network.",
+      "answer": "Network OOBS-Guest, password ProudTogether26 (sample).",
       "suggest": false
     },
     {
@@ -183,7 +206,7 @@
         "hungry",
         "snack"
       ],
-      "answer": "Volunteer lunch is 11:30 AM–1:00 PM in the 2nd-floor Foyer. Check with your lead before stepping away so your station stays covered.",
+      "answer": "11:30–1:00 in the 2nd-floor Foyer. Tell your lead before you go.",
       "suggest": false
     },
     {
@@ -195,7 +218,7 @@
         "missing",
         "left behind"
       ],
-      "answer": "All lost items go to Volunteer HQ (2nd floor, Room 204). Log the item and where it was found on the clipboard by the door.",
+      "answer": "Take it to Volunteer HQ, Room 204, and log it on the clipboard.",
       "suggest": false
     },
     {
@@ -205,7 +228,7 @@
         "channel",
         "walkie"
       ],
-      "answer": "All leads are on Channel 4 today. Hotel security is on Channel 9 — only use it for emergencies.",
+      "answer": "Leads are on Channel 4. Security is Channel 9, emergencies only.",
       "suggest": false
     },
     {
@@ -217,7 +240,7 @@
         "luggage",
         "jacket"
       ],
-      "answer": "Coat and bag check is on the ground floor, to the left of the main entrance. It's free for attendees.",
+      "answer": "Ground floor, left of the main entrance. It's free.",
       "suggest": false
     }
   ],
@@ -254,7 +277,7 @@
             "walk-in",
             "walk in"
           ],
-          "answer": "Try searching by email and by first name — chosen names may differ from the booking. Still nothing? Send them to the Help Desk at the end of the table; don't turn anyone away yourself."
+          "answer": "Try their email or first name. Still missing? Send to Help Desk."
         },
         {
           "question": "The badge printer jammed.",
@@ -266,7 +289,7 @@
             "badge not printing",
             "paper"
           ],
-          "answer": "Use the backup printer under table 3. Hand-write a temporary badge from the blank stack if both are down, and radio your lead."
+          "answer": "Use the backup printer under table 3, or hand-write a badge."
         },
         {
           "question": "Their name on the badge is wrong.",
@@ -279,7 +302,7 @@
             "reprint",
             "spelling"
           ],
-          "answer": "Reprint right away with the name they give you — no questions, no ID needed. Shred the old badge in the bin under the table."
+          "answer": "Reprint it with the name they give you. No ID needed."
         },
         {
           "question": "Where do speakers check in?",
@@ -290,7 +313,7 @@
             "media",
             "press"
           ],
-          "answer": "Speakers and media check in at the Speaker Green Room (3rd floor, Room 310). Walk them to the elevator and point the way."
+          "answer": "Send them to the Green Room, 3rd floor, Room 310."
         }
       ]
     },
@@ -324,7 +347,7 @@
             "map",
             "northlake"
           ],
-          "answer": "Check the large map at the entrance — booths run 1–30 clockwise from the door. Reminder: Northlake Bank moved to booth 22 today."
+          "answer": "See the map at the entrance. Northlake Bank is now booth 22."
         },
         {
           "question": "A recruiter needs a power outlet.",
@@ -337,7 +360,7 @@
             "extension",
             "electric"
           ],
-          "answer": "Extension cords are in the grey bin behind the résumé-review table. Tape cords down across walkways with the gaffer tape in the bin."
+          "answer": "Extension cords are in the grey bin behind résumé review."
         },
         {
           "question": "How does résumé review work?",
@@ -350,7 +373,7 @@
             "line",
             "queue"
           ],
-          "answer": "Attendees add their name to the sign-up sheet; each session is 10 minutes. If the wait is over 30 minutes, offer them a slot after lunch."
+          "answer": "Sign up on the sheet, 10 min each. Long wait? Offer a later slot."
         }
       ]
     },
@@ -384,7 +407,7 @@
             "start time",
             "panel"
           ],
-          "answer": "Keynote is at 10:00 AM today (moved from 9:30). Afternoon panels start at 1:30 PM. Full agenda is on the screen by the ballroom doors."
+          "answer": "Keynote is at 10:00 AM (moved from 9:30). Panels start at 1:30."
         },
         {
           "question": "The ballroom is full.",
@@ -397,7 +420,7 @@
             "overflow",
             "crowded"
           ],
-          "answer": "Direct people to the overflow livestream in Room 305 across the hall. Don't let people stand in the aisles — it's a fire-code issue."
+          "answer": "Send them to the overflow livestream in Room 305."
         },
         {
           "question": "The mic or slides aren't working.",
@@ -414,7 +437,7 @@
             "screen",
             "tech"
           ],
-          "answer": "Signal the AV booth at the back (wave both arms) and radio Channel 4. Spare handheld mics are in the box at stage left."
+          "answer": "Wave to the AV booth at the back. Spare mics are at stage left."
         },
         {
           "question": "Someone needs accessible seating.",
@@ -428,7 +451,7 @@
             "captions",
             "hearing"
           ],
-          "answer": "Accessible seating is front-left, near the ASL interpreter and the live-caption screen. Walk them over and remove the 'reserved' card if needed."
+          "answer": "Front-left, by the ASL interpreter and caption screen."
         }
       ]
     },
@@ -462,7 +485,7 @@
             "missing speaker",
             "where is the speaker"
           ],
-          "answer": "Call the number on the run-of-show sheet at 30 minutes before their slot. At 15 minutes, radio Danielle so the moderator can adjust the order."
+          "answer": "Call them 30 min before. At 15 min, radio Danielle."
         },
         {
           "question": "A speaker wants to change their slides.",
@@ -476,7 +499,7 @@
             "update",
             "change"
           ],
-          "answer": "Copy the new file to the USB stick and walk it to the AV booth yourself. After the 30-minute cutoff, check with AV before promising anything."
+          "answer": "Put the file on the USB and walk it to AV. Cutoff is 30 min before."
         },
         {
           "question": "What snacks are available?",
@@ -491,7 +514,7 @@
             "vegan",
             "gluten"
           ],
-          "answer": "Water, coffee, tea and a snack tray (vegan and gluten-free options labelled). Ask hotel staff on extension 310 for refills."
+          "answer": "Water, coffee, tea, vegan/GF snacks. Refills: ext. 310."
         }
       ]
     },
@@ -526,7 +549,7 @@
             "cover",
             "replacement"
           ],
-          "answer": "Check the shift sheet for floaters, send one over, and mark the original volunteer as absent. Let the station lead know on Channel 4."
+          "answer": "Send a floater from the shift sheet and tell the station lead."
         },
         {
           "question": "We're out of volunteer T-shirts.",
@@ -539,7 +562,7 @@
             "swag",
             "lanyard"
           ],
-          "answer": "Extra boxes are in the storage closet behind HQ (code 2204, sample). If a size is gone, give a volunteer lanyard instead."
+          "answer": "Extras are in the closet behind HQ. Out of a size? Give a lanyard."
         },
         {
           "question": "How do I sign out at end of shift?",
@@ -553,7 +576,7 @@
             "check out",
             "hours"
           ],
-          "answer": "Return your radio, sign the shift sheet with your out-time, and grab your thank-you card. Hours are emailed within a week."
+          "answer": "Return your radio and sign the shift sheet with your out-time."
         }
       ]
     }
@@ -962,7 +985,7 @@
   "escalation": {
     "_help": "Used by any answer with \"escalate\": true (first aid, harassment, safety). These replies always win over other matches.",
     "headline": "Find the Volunteer Lead at HQ now.",
-    "where": "Volunteer HQ · 2nd floor, Room 204",
+    "where": "2nd floor, Room 204",
     "name": "Jordan Achebe",
     "phone": "+14165550105",
     "callButton": "Call the Volunteer Lead"
