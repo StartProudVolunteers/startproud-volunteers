@@ -44,6 +44,8 @@
     var best = null, bestScore = 0;
     pool.forEach(function (p) {
       var sc = score(question, p.a);
+      // safety answers ("escalate": true) always win when they match at all
+      if (sc > 0 && p.a.escalate) sc += 1000;
       if (sc > 0 && sc + p.bonus > bestScore) { best = p.a; bestScore = sc + p.bonus; }
     });
     return best;
@@ -122,6 +124,11 @@
     msg.href = leadLink(s.lead);
     msg.querySelector("span").textContent = data.ui.fallbackButton + " " + s.lead.name.split(" ")[0];
 
+    // "See it on the map": per-station mapUrl, else the shared placeholder template
+    var mapUrl = s.mapUrl || ((data.links && data.links.mapUrl) || "").replace("{station}", encodeURIComponent(s.id));
+    var mapBtn = document.getElementById("st-map");
+    if (mapUrl) { mapBtn.href = mapUrl; mapBtn.textContent = "🗺️ " + data.ui.mapButton + " ↗"; } else mapBtn.hidden = true;
+
     var tasks = document.getElementById("st-tasks");
     s.tasks.forEach(function (t) { tasks.appendChild(el("li", null, t)); });
 
@@ -142,6 +149,15 @@
       if (!q) return;
       say(q, "me");
       var hit = findAnswer(q, s, data.globalAnswers);
+      if (hit && hit.escalate) {
+        var esc = data.escalation || {};
+        var u = say("", "bot", "msg-urgent");
+        u.appendChild(el("strong", { "class": "urgent-head" }, "🚨 " + esc.headline));
+        if (esc.where) u.appendChild(el("span", { "class": "urgent-where" }, esc.where + (esc.name ? " · " + esc.name : "")));
+        u.appendChild(el("span", { "class": "urgent-body" }, hit.answer));
+        u.appendChild(el("a", { "class": "btn btn-urgent", href: "tel:" + (esc.phone || "") }, "📞 " + esc.callButton));
+        return;
+      }
       if (hit) { say(hit.answer, "bot"); return; }
       {
         var b = say(data.ui.fallback, "bot", "msg-unsure");
@@ -160,6 +176,19 @@
       chip.addEventListener("click", function () { ask(a.question); });
       sugg.appendChild(chip);
     });
+    // org / attendee questions shared by every station
+    var org = (data.globalAnswers || []).filter(function (a) { return a.suggest; });
+    if (org.length) {
+      var orgBox = document.getElementById("org-suggestions");
+      orgBox.appendChild(el("p", { "class": "fact-label sugg-label" }, data.ui.orgSuggestTitle));
+      var row = el("div", { "class": "suggestions" });
+      org.forEach(function (a) {
+        var chip = el("button", { "class": "chip chip-org", type: "button" }, a.question);
+        chip.addEventListener("click", function () { ask(a.question); });
+        row.appendChild(chip);
+      });
+      orgBox.appendChild(row);
+    }
   }
 
 

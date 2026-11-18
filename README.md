@@ -32,7 +32,14 @@ The live site updates in about a minute.
   - `keywords`: lowercase words or short phrases. If a typed question contains one, the answer can match.
     The answer with the most keyword hits wins; station answers beat general ones on a tie.
   - `answer`: what the bot says.
-- **`globalAnswers`**: answers every station can give (washrooms, Wi-Fi, lunch, first aid, …).
+- **`globalAnswers`**: answers every station can give (Start Proud, code of conduct, sponsors,
+  washrooms, Wi-Fi, lunch, …). Ones with `"suggest": true` appear as "Attendees often ask" buttons.
+- **Safety answers** (`"escalate": true`: first aid, harassment, feeling unsafe) always win over
+  other matches. They show a red "Find the Volunteer Lead at HQ now" card with a call button.
+  The name, location and phone number come from **`escalation`**.
+- **`links.mapUrl`**: where "See it on the map" goes. It's a placeholder for now. Swap in the
+  real map link; `{station}` is replaced with the station id (e.g. `registration`). To send one
+  station somewhere else, add `"mapUrl": "https://…"` to that station.
 - **`myDay.roles`**: one entry per role (Registration, Career Fair, Ballroom, Green Room, Floater).
   Each `slots` item has 24-hour `start`/`end` (`"09:45"`), a `title`, an optional `note`, and a `room`
   that must match a room `id` under `myDay.floors`. `station` links the role to its station page.

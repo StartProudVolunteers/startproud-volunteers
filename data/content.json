@@ -4,7 +4,7 @@
     "name": "Out on Bay Street",
     "shortName": "OOBS",
     "venue": "Hotel X Toronto",
-    "dates": "Two-day conference · Day 2 of 2",
+    "dates": "April 30 – May 1, 2027",
     "tagline": "Your volunteer assistant. Pick your station to see what to do, who your lead is, and quick answers."
   },
   "ui": {
@@ -24,7 +24,9 @@
     "backHome": "All stations",
     "allStationsNote": "Bookmark your station or scan the QR card at your table.",
     "footer": "Concept demo by Team B, not an official Start Proud tool.",
-    "myDay": "My day"
+    "myDay": "My day",
+    "orgSuggestTitle": "Attendees often ask",
+    "mapButton": "See it on the map"
   },
   "catchUp": {
     "title": "Today's changes",
@@ -39,16 +41,124 @@
   },
   "globalAnswers": [
     {
-      "question": "Where are the washrooms?",
+      "question": "What is Start Proud?",
+      "suggest": true,
+      "keywords": [
+        "start proud",
+        "startproud",
+        "who runs",
+        "organizer",
+        "organiser",
+        "organization",
+        "organisation",
+        "nonprofit",
+        "non-profit",
+        "what is oobs",
+        "what is out on bay street"
+      ],
+      "answer": "Start Proud is a Canadian non-profit that connects LGBTQ+ students and early-career professionals with employers and mentors. Out on Bay Street is its flagship conference. For more detail, point people to the Start Proud website or the info desk at Registration."
+    },
+    {
+      "question": "What's the code of conduct?",
+      "suggest": true,
+      "keywords": [
+        "code of conduct",
+        "conduct",
+        "rules",
+        "policy",
+        "behaviour",
+        "behavior",
+        "respect"
+      ],
+      "answer": "In short: respect everyone's identity, names and pronouns; no harassment, discrimination or unwanted contact; ask before taking photos of people. The full Code of Conduct is printed on the back of every badge (sample). If someone reports a problem, don't investigate it yourself; find the Volunteer Lead at HQ."
+    },
+    {
+      "question": "Who are the sponsors?",
+      "suggest": true,
+      "keywords": [
+        "sponsor",
+        "sponsors",
+        "partner",
+        "partners",
+        "who paid",
+        "funded",
+        "funding"
+      ],
+      "answer": "Placeholder list: Platinum: Sponsor A. Gold: Sponsor B and Sponsor C. Community partners: Sponsor D, Sponsor E. Most sponsors have a booth at the Career Fair (2nd floor, Exhibition Hall B)."
+    },
+    {
+      "question": "Where's the all-gender washroom?",
+      "suggest": true,
       "keywords": [
         "washroom",
         "bathroom",
         "restroom",
         "toilet",
         "all-gender",
-        "gender neutral"
+        "all gender",
+        "gender neutral",
+        "gender-neutral",
+        "nonbinary",
+        "non-binary"
       ],
-      "answer": "All-gender washrooms are on every floor next to the elevators. Accessible washrooms are on floors 1 and 3 beside the stairwell."
+      "answer": "All-gender washrooms are on every floor, right next to the elevators. Accessible washrooms are on the Ground and 3rd floors beside the stairwell. Anyone can use whichever washroom fits them best."
+    },
+    {
+      "question": "Someone needs first aid.",
+      "escalate": true,
+      "keywords": [
+        "first aid",
+        "medical",
+        "hurt",
+        "injured",
+        "injury",
+        "emergency",
+        "sick",
+        "faint",
+        "fainted",
+        "bleeding",
+        "allergic",
+        "911",
+        "ambulance",
+        "collapsed",
+        "seizure"
+      ],
+      "answer": "Don't treat it yourself. Stay with the person and send someone (or call) for the Volunteer Lead, who will bring the trained first-aider. If someone's life is in danger, call 911 first."
+    },
+    {
+      "question": "Someone is being harassed.",
+      "escalate": true,
+      "keywords": [
+        "harass",
+        "harassed",
+        "harassment",
+        "misgender",
+        "inappropriate",
+        "touched",
+        "threat",
+        "threatened",
+        "discrimination",
+        "slur"
+      ],
+      "answer": "Don't confront anyone or try to sort it out yourself. Check the person is OK, offer to walk with them, and get the Volunteer Lead right away."
+    },
+    {
+      "question": "Someone feels unsafe.",
+      "escalate": true,
+      "keywords": [
+        "unsafe",
+        "safety",
+        "not safe",
+        "scared",
+        "danger",
+        "dangerous",
+        "security",
+        "fight",
+        "uncomfortable",
+        "suspicious",
+        "weapon"
+      ],
+      "answer": "Your job is to get help, not to handle it. Move yourself and others away if needed and get the Volunteer Lead right away. If someone's life is in danger, call 911 first."
     },
     {
       "question": "What's the Wi-Fi?",
@@ -59,7 +169,8 @@
         "password",
         "network"
       ],
-      "answer": "Network: OOBS-Guest · Password: ProudTogether26 (sample). Volunteers can use the same network."
+      "answer": "Network: OOBS-Guest · Password: ProudTogether26 (sample). Volunteers can use the same network.",
+      "suggest": false
     },
     {
       "question": "When is volunteer lunch?",
@@ -72,22 +183,8 @@
         "hungry",
         "snack"
       ],
-      "answer": "Volunteer lunch is 11:30 AM–1:00 PM in the 2nd-floor Foyer. Check with your lead before stepping away so your station stays covered."
-    },
-    {
-      "question": "Someone needs first aid. What do I do?",
-      "keywords": [
-        "first aid",
-        "medical",
-        "hurt",
-        "injured",
-        "emergency",
-        "sick",
-        "faint",
-        "911",
-        "ambulance"
-      ],
-      "answer": "If it's life-threatening, call 911 first. Then radio Channel 4 or tell your lead. The first-aid kit and trained responder are at Volunteer HQ."
+      "answer": "Volunteer lunch is 11:30 AM–1:00 PM in the 2nd-floor Foyer. Check with your lead before stepping away so your station stays covered.",
+      "suggest": false
     },
     {
       "question": "Where is lost and found?",
@@ -98,21 +195,8 @@
         "missing",
         "left behind"
       ],
-      "answer": "All lost items go to Volunteer HQ (2nd floor, Room 204). Log the item and where it was found on the clipboard by the door."
-    },
-    {
-      "question": "Someone is being harassed or feels unsafe.",
-      "keywords": [
-        "harass",
-        "unsafe",
-        "safety",
-        "code of conduct",
-        "misgender",
-        "inappropriate",
-        "uncomfortable",
-        "security"
-      ],
-      "answer": "Stay calm, check in with the person, and don't confront the other party. Radio Channel 4 for a lead or hotel security. Every report is taken seriously under the Code of Conduct."
+      "answer": "All lost items go to Volunteer HQ (2nd floor, Room 204). Log the item and where it was found on the clipboard by the door.",
+      "suggest": false
     },
     {
       "question": "Which radio channel do I use?",
@@ -121,7 +205,8 @@
         "channel",
         "walkie"
       ],
-      "answer": "All leads are on Channel 4 today. Hotel security is on Channel 9 — only use it for emergencies."
+      "answer": "All leads are on Channel 4 today. Hotel security is on Channel 9 — only use it for emergencies.",
+      "suggest": false
     },
     {
       "question": "Where is the coat check?",
@@ -132,7 +217,8 @@
         "luggage",
         "jacket"
       ],
-      "answer": "Coat and bag check is on the ground floor, to the left of the main entrance. It's free for attendees."
+      "answer": "Coat and bag check is on the ground floor, to the left of the main entrance. It's free for attendees.",
+      "suggest": false
     }
   ],
   "stations": [
@@ -872,5 +958,17 @@
         ]
       }
     ]
+  },
+  "escalation": {
+    "_help": "Used by any answer with \"escalate\": true (first aid, harassment, safety). These replies always win over other matches.",
+    "headline": "Find the Volunteer Lead at HQ now.",
+    "where": "Volunteer HQ · 2nd floor, Room 204",
+    "name": "Jordan Achebe",
+    "phone": "+14165550105",
+    "callButton": "Call the Volunteer Lead"
+  },
+  "links": {
+    "_help": "Placeholder for Pransh's map. {station} is replaced with the station id (e.g. registration). A station can override this with its own \"mapUrl\".",
+    "mapUrl": "https://example.com/oobs-map/?station={station}"
   }
 }

@@ -225,3 +225,15 @@ a { color: var(--accent); }
 .venue-map .pin { fill: #ffed00; stroke: var(--ink); stroke-width: 1; }
 .map-caption { font-weight: 700; margin: 10px 0 4px; }
 .slot.is-picked { opacity: 1; }
+
+/* ---------- map button, org chips, safety escalation ---------- */
+.map-btn { grid-column: 1 / -1; width: 100%; }
+.sugg-label { margin: 0 0 6px; }
+.chip-org { background: transparent; border-color: var(--line); }
+:root { --urgent: #b3261e; --urgent-soft: #fdecea; --urgent-ink: #5c0f0a; }
+@media (prefers-color-scheme: dark) { :root { --urgent: #ff8a80; --urgent-soft: #3a1513; --urgent-ink: #ffdad6; } }
+.msg-urgent { background: var(--urgent-soft); color: var(--urgent-ink); border: 2px solid var(--urgent); display: grid; gap: 4px; max-width: 100%; }
+.urgent-head { font-size: 1.05rem; }
+.urgent-where { font-weight: 600; }
+.btn-urgent { background: var(--urgent); color: #fff; margin-top: 6px; }
+@media (prefers-color-scheme: dark) { .btn-urgent { color: #2b0503; } }
