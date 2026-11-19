@@ -117,11 +117,9 @@ The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM.
 
 The dashboard is where organizers make changes, top to bottom:
 1. Three numbers. "Need attention" = open problems + tasks flagged as needing help.
-2. **Make a live change**: move Registration Desk B to the East Foyer. Then open
-   Volunteer dashboard to show Ava's shifts updating.
-3. **Problems reported**: one tap to Resolve, or type a new problem and tap Report.
-4. **Fill open shifts**: one tap ("Add Avery") puts a free volunteer on a short-staffed shift.
-5. **Recent changes**: every edit above shows up here.
+2. **Problems reported**: one tap to Resolve, or type a new problem and tap Report.
+3. **Fill open shifts**: one tap ("Add Avery") puts a free volunteer on a short-staffed shift.
+4. **Recent changes**: every edit above shows up here.
 
 Use "Reset demo data" in the sidebar to undo everything before the next run-through.
 

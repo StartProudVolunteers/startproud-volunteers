@@ -698,17 +698,18 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* Volunteer Directory cards: hide the "Joined [date]" label (it overlapped long names) */
 .vc-joined { display: none !important; }
 
-/* Organizer dashboard, top to bottom: headline, three numbers, the Desk B live change,
+/* Organizer dashboard, top to bottom: headline, three numbers,
    Problems reported + Fill open shifts (one-tap changes), Recent changes.
    Parts of both pages are laid out on one grid. */
 html[data-view="dashboard"] .content { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; align-content: start; }
 .dash, .dash ~ .ops, .dash > .kpis, .dash > .status-strip { display: contents; }
 .dash > .hero { grid-column: 1 / -1; order: 1; }
 .dash .kpi, .dash .ss.help { order: 2; }
-.dash ~ .ops > .scenario { grid-column: 1 / -1; order: 3; }
+/* "Make a live change" (move Desk B) card: removed from the demo */
+.dash ~ .ops > .scenario { display: none; }
 .dash ~ .ops > .grid-2 { grid-column: 1 / -1; order: 4; }
 .dash > .grid-2 { grid-column: 1 / -1; order: 5; grid-template-columns: minmax(0, 1fr); }
-.dash ~ .ops > :not(.scenario):not(.grid-2) { display: none; }
+.dash ~ .ops > :not(.grid-2) { display: none; }
 .dash ~ .ops > .grid-2 > .card:not(:has(.issues)):not(:has(.gaps)) { display: none; }
 .dash .hero .eyebrow, .dash .hero .hero-sub, .dash .hero .hero-actions { display: none; }
 .dash .kpis > :nth-child(2), .dash .kpis > :nth-child(3) { display: none; }
