@@ -89,10 +89,12 @@ sub("function Ss(){", "function OobsDash(){return I.default.createElement(I.defa
 # A step can name `sel` (any CSS selector) instead of a data-tour `target`;
 # every visible match glows.
 sub('let S=document.querySelector(`[data-tour="${Je[s.step].target}"]`);S&&(S.classList.add("tour-glow"),S.scrollIntoView({block:"center",behavior:"smooth"}))',
+# Only change page when the step is on a different page: changing page jumps to the
+# top, so doing it on every step made the view bounce up and back down.
     'let S=[...document.querySelectorAll(Je[s.step].sel||`[data-tour="${Je[s.step].target}"]`)].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");'
     'S.forEach(x=>x.classList.add("tour-glow"));S[0]&&S[0].scrollIntoView({block:"center",behavior:"smooth"})', 1)
-DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),e.go("dashboard")'
-PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),e.go("my-schedule")'
+DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),(e.page!=="dashboard"&&e.go("dashboard"))'
+PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),(e.page!=="my-schedule"&&e.go("my-schedule"))'
 STEPS = [
   # Organizer dashboard
   ('Organizer dashboard', 'target:"hero"',
@@ -108,12 +110,12 @@ STEPS = [
   ('Every change is logged', 'sel:".dash .card:has(.feed)"',
    "Every edit, including the Desk B move we just made, is logged here, so the whole team works from one version of the truth.", DASH),
   # Volunteer Directory
-  ('Volunteer Directory', 'sel:\'html[data-view="directory"] .content > .page\'',
+  ('Volunteer Directory', 'sel:\'html[data-view="directory"] .content > .page > .toolbar\'',
    "All 30 volunteers in one place. Search by name or skill, filter by team, volunteer type, onboarding or experience, and switch between cards and a table.",
-   'e.setVolDrawer(null),e.setPortalTask(null),e.go("directory")'),
+   'e.setVolDrawer(null),e.setPortalTask(null),(e.page!=="directory"&&e.go("directory"))'),
   ("A volunteer's profile", 'sel:".drawer"',
    "Tap anyone to see their profile: role, supervisor, onboarding, skills and every shift. View as this volunteer opens their own dashboard.",
-   'e.go("directory"),e.setVolDrawer("v01")'),
+   '(e.page!=="directory"&&e.go("directory")),e.setVolDrawer("v01")'),
   # Volunteer dashboard
   ('Volunteer dashboard', 'target:"up-next"',
    "Now the volunteer's point of view. Ava is a first-time volunteer who signed up 48 hours before the event. Up next tells her exactly where to be right now.",
