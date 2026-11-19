@@ -59,7 +59,7 @@ sub("Logged from Live Operations.", "Logged from the organizer dashboard.", 1)
 sub("Live Operations", "Live changes", 1)  # the (hidden) tab label
 
 # --- Four tabs with plain names (Live changes is folded into the dashboard) ----
-sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:"Volunteer schedule",icon:"phone"', 1)
+sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:"Volunteer dashboard",icon:"phone"', 1)
 sub('label:"Interactive Hotel Map",icon:"map"', 'label:"Hotel map",icon:"map"', 1)
 # (AI assistant tab is hidden with CSS below)
 sub("Demo scenario: Registration Desk B moves to the East Foyer",
@@ -98,7 +98,7 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 /* Event clock: hidden on every tab. The demo stays at Fri, Apr 30, 10:30 AM. */
 .topbar .clock { display: none !important; }
 
-/* Four tabs: Organizer dashboard, Volunteer Directory (as Charlie built it), Volunteer schedule, Hotel map */
+/* Four tabs: Organizer dashboard, Volunteer Directory (as Charlie built it), Volunteer dashboard, Hotel map */
 .nav-item[href="#assignments"], .nav-item[href="#operations"],
 .nav-item[href="#assistant"] { display: none !important; }
 .ai-badge { display: none !important; }
