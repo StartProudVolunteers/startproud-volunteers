@@ -19,7 +19,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_BASE = "https://jordanpcho.github.io/Comms-Final-Project/"
+DEFAULT_BASE = "https://jordanpcho.github.io/startproud-volunteers-/"
 INK, ACCENT, MUTED = HexColor("#1b1440"), HexColor("#6b3fd4"), HexColor("#5c5775")
 PRIDE = ["#e40303", "#ff8c00", "#ffed00", "#008026", "#004dff", "#750787"]
 

@@ -91,7 +91,7 @@ The empty `.nojekyll` file tells GitHub to serve the files as-is.
 
 ## Regenerate the QR cards
 
-The committed `qr-cards.pdf` points at `https://jordanpcho.github.io/Comms-Final-Project/`.
+The committed `qr-cards.pdf` points at `https://jordanpcho.github.io/startproud-volunteers-/`.
 If your live URL is different (check step 3 above), rebuild it:
 
 ```bash
