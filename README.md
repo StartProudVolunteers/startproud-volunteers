@@ -118,12 +118,11 @@ numbers. Click it during the demo, then open Volunteer schedule to show Ava's sh
 updating. Use "Reset demo data" in the sidebar to undo it before the next run-through.
 
 The script changes a few text strings (Hotel X Toronto, Ava Papanikolaou, tab names),
-adds the "Ask OOBS" button, makes the dashboard page render the Desk B card too, and
+makes the dashboard page render the Desk B card too, and
 adds a stylesheet that hides everything not needed for the demo. If Charlie sends a
 new version, copy it over `planner/full/index.html` and re-run the script. It
 stops with an error if any text it expects has changed.
 
-- The "Ask OOBS" button opens the Registration station chat (`station.html?id=registration#ask`).
 - The chat's "My schedule" button goes back to `planner/#my-schedule` (`links.plannerSchedule`).
 - The demo version saves its data under its own browser-storage keys, so playing with
   `/planner/full/` doesn't change the demo, and it always opens the volunteer view as Ava.

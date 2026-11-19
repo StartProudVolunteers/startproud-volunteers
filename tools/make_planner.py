@@ -17,8 +17,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "planner" / "full" / "index.html"
 OUT = ROOT / "planner" / "index.html"
 
-# Where the planner's buttons go on our site (relative to /planner/).
-ASK_OOBS_URL = "../station.html?id=registration#ask"
 
 html = SRC.read_text(encoding="utf-8")
 
@@ -70,11 +68,6 @@ sub("function Ss(){", "function OobsDash(){return I.default.createElement(I.defa
 # --- Own browser storage, so the full version's saved data never leaks in ------
 sub('"start-proud-volunteeros-v1"', '"oobs-planner-demo-v1"', 1)
 sub('"start-proud-volunteeros-ui-v1"', '"oobs-planner-demo-ui-v1"', 1)
-
-# --- "Ask OOBS" button right under the Up next card -----------------------------
-sub('a.default.createElement("div",{className:"p-contact"}',
-    'a.default.createElement("a",{className:"btn primary ask-oobs",href:"' + ASK_OOBS_URL + '"},'
-    '"\\u{1F4AC} Ask OOBS"),a.default.createElement("div",{className:"p-contact"}', 1)
 
 # --- Force the light theme ---------------------------------------------------------
 sub("<!doctype html><html>", '<!doctype html><html data-theme="light">', 1)
@@ -138,8 +131,6 @@ html[data-view="my-schedule"] .oobs-org-link {
   color: var(--accent-ink); font: 600 13px var(--f-body); text-decoration: none; }
 @media (max-width: 900px) { html[data-view="my-schedule"] .oobs-org-link { top: calc(env(safe-area-inset-top, 0px) + 12px); } }
 
-/* Ask OOBS button under the Up next card */
-.ask-oobs { min-height: 56px; font-size: 17px; font-weight: 700; border-radius: 14px; text-decoration: none; gap: 10px; }
 </style>
 <div id="root"></div>
 <a class="oobs-org-link" href="#dashboard">← Organizer view</a>"""
