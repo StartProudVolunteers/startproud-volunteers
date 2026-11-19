@@ -54,14 +54,22 @@ sub("Alex", "Ava", 7)  # the remaining first-name mentions
 
 # --- Renames -------------------------------------------------------------------
 sub("Event Command Centre", "Organizer dashboard", 2)
-sub("Live Operations", "Live changes", 3)
+sub('onClick:()=>l.go("operations")},"Open Live Operations")', 'onClick:()=>l.go("dashboard")},"Open dashboard")', 1)
+sub("Logged from Live Operations.", "Logged from the organizer dashboard.", 1)
+sub("Live Operations", "Live changes", 1)  # the (hidden) tab label
 
 # --- Four tabs with plain names (Live changes is folded into the dashboard) ----
 sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:"Volunteer schedule",icon:"phone"', 1)
 sub('label:"Interactive Hotel Map",icon:"map"', 'label:"Hotel map",icon:"map"', 1)
-sub('label:"AI Logistics Assistant",icon:"spark"', 'label:"AI assistant",icon:"spark"', 1)
+# (AI assistant tab is hidden with CSS below)
 sub("Demo scenario: Registration Desk B moves to the East Foyer",
     "Make a live change: move Registration Desk B to the East Foyer", 1)
+# Plain names for the two one-tap change cards brought onto the dashboard
+sub('"Missing volunteer coverage"', '"Fill open shifts"', 1)
+sub('"Upcoming and current shifts below their headcount"', '"Tap Add to put a free volunteer on the shift"', 1)
+sub('"Unresolved issues"', '"Problems reported"', 1)
+sub('placeholder:"Log a new issue\\u2026"', 'placeholder:"Report a new problem\\u2026"', 1)
+sub('"Log")', '"Report")', 1)
 # The dashboard page renders the dashboard *and* the Live changes page; CSS below
 # keeps only the Desk B card from the second one and puts it under the numbers.
 sub("ws={dashboard:rt,", "ws={dashboard:OobsDash,", 1)
@@ -90,22 +98,27 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 /* Event clock: hidden on every tab. The demo stays at Fri, Apr 30, 10:30 AM. */
 .topbar .clock { display: none !important; }
 
-/* Four tabs: Organizer dashboard, Volunteer schedule, Hotel map, AI assistant */
-.nav-item[href="#directory"], .nav-item[href="#assignments"], .nav-item[href="#operations"] { display: none !important; }
+/* Three tabs: Organizer dashboard, Volunteer schedule, Hotel map */
+.nav-item[href="#directory"], .nav-item[href="#assignments"], .nav-item[href="#operations"],
+.nav-item[href="#assistant"] { display: none !important; }
+.ai-badge { display: none !important; }
 
 /* Organizer dashboard, top to bottom: headline, three numbers, the Desk B live change,
-   Needs attention + Recent changes. Both pages' parts are laid out on one grid. */
+   Problems reported + Fill open shifts (one-tap changes), Recent changes.
+   Parts of both pages are laid out on one grid. */
 html[data-view="dashboard"] .content { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; align-content: start; }
 .dash, .dash ~ .ops, .dash > .kpis, .dash > .status-strip { display: contents; }
 .dash > .hero { grid-column: 1 / -1; order: 1; }
 .dash .kpi, .dash .ss.help { order: 2; }
 .dash ~ .ops > .scenario { grid-column: 1 / -1; order: 3; }
-.dash > .grid-2 { grid-column: 1 / -1; order: 4; }
-.dash ~ .ops > :not(.scenario) { display: none; }
+.dash ~ .ops > .grid-2 { grid-column: 1 / -1; order: 4; }
+.dash > .grid-2 { grid-column: 1 / -1; order: 5; grid-template-columns: minmax(0, 1fr); }
+.dash ~ .ops > :not(.scenario):not(.grid-2) { display: none; }
+.dash ~ .ops > .grid-2 > .card:not(:has(.issues)):not(:has(.gaps)) { display: none; }
 .dash .hero .eyebrow, .dash .hero .hero-sub, .dash .hero .hero-actions { display: none; }
 .dash .kpis > :nth-child(2), .dash .kpis > :nth-child(3) { display: none; }
 .dash .status-strip > :not(.help) { display: none; }
-.dash .grid-2 > .card:not(:has(.att-list)):not(:has(.feed)) { display: none; }
+.dash > .grid-2 > .card:not(:has(.feed)) { display: none; }
 /* No buttons that jump to pages outside the four tabs */
 .dash .kpi, .dash .ss { pointer-events: none; }
 .dash .card-h .btn { display: none; }

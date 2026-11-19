@@ -111,11 +111,18 @@ Scan one with a phone before printing a batch.
 python3 tools/make_planner.py
 ```
 
-The demo has four tabs: **Organizer dashboard**, **Volunteer schedule**, **Hotel map**
-and **AI assistant**. Charlie's "Live Operations" page is folded into the dashboard:
-only its "move Desk B to the East Foyer" card is kept, shown right under the three
-numbers. The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM. Click it during the demo, then open Volunteer schedule to show Ava's shifts
-updating. Use "Reset demo data" in the sidebar to undo it before the next run-through.
+The demo has three tabs: **Organizer dashboard**, **Volunteer schedule** and **Hotel map**.
+The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM.
+
+The dashboard is where organizers make changes, top to bottom:
+1. Three numbers. "Need attention" = open problems + tasks flagged as needing help.
+2. **Make a live change**: move Registration Desk B to the East Foyer. Then open
+   Volunteer schedule to show Ava's shifts updating.
+3. **Problems reported**: one tap to Resolve, or type a new problem and tap Report.
+4. **Fill open shifts**: one tap ("Add Avery") puts a free volunteer on a short-staffed shift.
+5. **Recent changes**: every edit above shows up here.
+
+Use "Reset demo data" in the sidebar to undo everything before the next run-through.
 
 The script changes a few text strings (Hotel X Toronto, Ava Papanikolaou, tab names),
 makes the dashboard page render the Desk B card too, adds a floating
