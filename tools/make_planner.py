@@ -61,6 +61,9 @@ sub("Event Command Centre", "Organizer dashboard", 2)
 sub('onClick:()=>l.go("operations")},"Open Live Operations")', 'onClick:()=>l.go("dashboard")},"Open dashboard")', 1)
 sub("Logged from Live Operations.", "Logged from the organizer dashboard.", 1)
 sub("Live Operations", "Live changes", 1)  # the (hidden) tab label
+# "Resume" without accents (Charlie's code writes é as \xE9)
+sub("R\\xE9sum\\xE9", "Resume", 3)
+sub("r\\xE9sum\\xE9", "resume", 3)
 
 # --- Four tabs with plain names (Live changes is folded into the dashboard) ----
 sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:"Volunteer dashboard",icon:"phone"', 1)

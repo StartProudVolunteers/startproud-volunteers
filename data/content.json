@@ -353,7 +353,7 @@
       },
       "tasks": [
         "Help recruiters find their booth number using the floor map at the entrance.",
-        "Keep the aisles clear and the résumé-review line moving (10 minutes each).",
+        "Keep the aisles clear and the resume-review line moving (10 minutes each).",
         "Restock water and swag tables every hour.",
         "Note booth 14 ↔ 22 swap today — update anyone using an old map.",
         "At 3:15 PM give recruiters a 15-minute wrap-up heads-up."
@@ -383,14 +383,13 @@
             "extension",
             "electric"
           ],
-          "answer": "Extension cords are in the grey bin behind résumé review."
+          "answer": "Extension cords are in the grey bin behind resume review."
         },
         {
-          "question": "How does résumé review work?",
+          "question": "How does resume review work?",
           "suggest": true,
           "keywords": [
             "resume",
-            "résumé",
             "cv",
             "review",
             "line",
@@ -807,7 +806,7 @@
           {
             "start": "12:15",
             "end": "15:15",
-            "title": "Résumé-review line & restocking",
+            "title": "Resume-review line & restocking",
             "room": "hall",
             "note": "Restock water every hour."
           },
