@@ -102,6 +102,8 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 .nav-item[href="#assignments"], .nav-item[href="#operations"],
 .nav-item[href="#assistant"] { display: none !important; }
 .ai-badge { display: none !important; }
+/* Volunteer Directory cards: hide the "Joined [date]" label (it overlapped long names) */
+.vc-joined { display: none !important; }
 
 /* Organizer dashboard, top to bottom: headline, three numbers, the Desk B live change,
    Problems reported + Fill open shifts (one-tap changes), Recent changes.

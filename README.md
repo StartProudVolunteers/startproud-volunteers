@@ -111,8 +111,8 @@ Scan one with a phone before printing a batch.
 python3 tools/make_planner.py
 ```
 
-The demo has four tabs: **Organizer dashboard**, **Volunteer Directory** (exactly as Charlie
-built it), **Volunteer dashboard** and **Hotel map**.
+The demo has four tabs: **Organizer dashboard**, **Volunteer Directory** (as Charlie
+built it, minus the "Joined" dates that overlapped long names), **Volunteer dashboard** and **Hotel map**.
 The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM.
 
 The dashboard is where organizers make changes, top to bottom:
