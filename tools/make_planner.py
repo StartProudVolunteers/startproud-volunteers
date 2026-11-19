@@ -67,7 +67,9 @@ sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:
 sub('label:"Interactive Hotel Map",icon:"map"', 'label:"Hotel map",icon:"map"', 1)
 # (AI assistant tab is hidden with CSS below)
 sub("Demo scenario: Registration Desk B moves to the East Foyer",
-    "Make a live change: move Registration Desk B to the East Foyer", 1)
+    "Live change: move Desk B to the East Foyer", 1)
+sub("The lobby is crowding at the main entrance. Move Desk B once and every affected schedule updates.",
+    "The lobby is too crowded. One tap moves the desk and tells every volunteer working there.", 1)
 # Plain names for the two one-tap change cards brought onto the dashboard
 sub('"Missing volunteer coverage"', '"Fill open shifts"', 1)
 sub('"Upcoming and current shifts below their headcount"', '"Tap Add to put a free volunteer on the shift"', 1)
@@ -79,6 +81,68 @@ sub('"Log")', '"Report")', 1)
 sub("ws={dashboard:rt,", "ws={dashboard:OobsDash,", 1)
 sub("function Ss(){", "function OobsDash(){return I.default.createElement(I.default.Fragment,null,"
     "I.default.createElement(rt,null),I.default.createElement(Nt,null))}function Ss(){", 1)
+
+# --- Presentation Demo: Charlie's guided tour with new steps for this version -----
+# A step can name `sel` (any CSS selector) instead of a data-tour `target`;
+# every visible match glows.
+sub('let S=document.querySelector(`[data-tour="${Je[s.step].target}"]`);S&&(S.classList.add("tour-glow"),S.scrollIntoView({block:"center",behavior:"smooth"}))',
+    'let S=[...document.querySelectorAll(Je[s.step].sel||`[data-tour="${Je[s.step].target}"]`)].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");'
+    'S.forEach(x=>x.classList.add("tour-glow"));S[0]&&S[0].scrollIntoView({block:"center",behavior:"smooth"})', 1)
+DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),e.go("dashboard")'
+PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),e.go("my-schedule")'
+STEPS = [
+  # Organizer dashboard
+  ('Organizer dashboard', 'target:"hero"',
+   "This is the organizer's view of Out on Bay Street 2027 at Hotel X Toronto: everything happening across the event, on one screen.", DASH),
+  ('Three numbers at a glance', 'sel:".dash .kpi, .dash .ss.help"',
+   "How many volunteers we have, how many are on shift right now, and how many things need attention: open problems plus tasks flagged as needing help.", DASH),
+  ('Make a live change', 'target:"scenario",action:"Move Desk B now"',
+   "The lobby is too crowded, so we move Registration Desk B to the East Foyer. One tap, and every volunteer working there is told automatically.", DASH),
+  ('Fix problems in one tap', 'sel:".dash ~ .ops .card:has(.issues)"',
+   "Problems volunteers report land here. Tap Resolve when one is fixed, or type a new one and tap Report.", DASH),
+  ('Fill open shifts', 'sel:".dash ~ .ops .card:has(.gaps)"',
+   "Shifts that are short-staffed, each with a free volunteer suggested. One tap adds them and updates their schedule.", DASH),
+  ('Every change is logged', 'sel:".dash .card:has(.feed)"',
+   "Every edit, including the Desk B move we just made, is logged here, so the whole team works from one version of the truth.", DASH),
+  # Volunteer Directory
+  ('Volunteer Directory', 'sel:\'html[data-view="directory"] .content > .page\'',
+   "All 30 volunteers in one place. Search by name or skill, filter by team, volunteer type, onboarding or experience, and switch between cards and a table.",
+   'e.setVolDrawer(null),e.setPortalTask(null),e.go("directory")'),
+  ("A volunteer's profile", 'sel:".drawer"',
+   "Tap anyone to see their profile: role, supervisor, onboarding, skills and every shift. View as this volunteer opens their own dashboard.",
+   'e.go("directory"),e.setVolDrawer("v01")'),
+  # Volunteer dashboard
+  ('Volunteer dashboard', 'target:"up-next"',
+   "Now the volunteer's point of view. Ava is a first-time volunteer who signed up 48 hours before the event. Up next tells her exactly where to be right now.",
+   'e.setPortalTask(null),' + PORTAL),
+  ('Her schedule updated itself', 'target:"change-banner"',
+   "Because we moved Desk B, Ava's shifts already show the East Foyer, with a note explaining why. Nobody had to phone or email her.",
+   'e.setPortalTask(null),' + PORTAL),
+  ('Only her own shifts', 'target:"p-list"',
+   "Ava sees only her own shifts, each with a time, room, floor and status.",
+   'e.setPortalTask(null),' + PORTAL),
+  ('One tap for full instructions', 'target:"sheet-loc"',
+   "Opening a shift shows directions, her tasks, her teammates, and her supervisor with their radio channel.",
+   PORTAL + ',e.setPortalTask("a22")'),
+  ('Ask OOBS', 'sel:".oobs-ask-fab"',
+   "Questions? Ask OOBS opens our volunteer chatbot right here: where Desk B moved, washrooms, lunch, or who to call in an emergency.",
+   'e.setPortalTask(null),' + PORTAL),
+  # Hotel map
+  ('Hotel map', 'target:"floorplan"',
+   "Finally, the hotel map: every room on every floor. Any shift can be highlighted, here the East Foyer, where Desk B now sits.",
+   'e.setVolDrawer(null),e.setPortalTask(null),e.showOnMap("eastFoyer",null)'),
+]
+import json as _json
+def _step(t):
+    title, where, say, enter = t
+    extra = ''
+    if 'action:' in where:
+        extra = ',next:({data:e})=>{e.state.scenarioDone||e.relocateDeskB("Lobby is crowded at the main doors. Use the glass doors at the east end of the lobby.")}'
+    return '{title:' + _json.dumps(title) + ',' + where + ',say:' + _json.dumps(say) + ',enter:({ui:e})=>{' + enter + '}' + extra + '}'
+NEW_TOUR = 'var Je=[' + ','.join(_step(t) for t in STEPS) + '];function St(){'
+_a = html.index('var Je=[{title:"The Organizer dashboard"')
+_b = html.index('}}];function St(){', _a) + len('}}];function St(){')
+html = html[:_a] + NEW_TOUR + html[_b:]
 
 # --- Own browser storage, so the full version's saved data never leaks in ------
 sub('"start-proud-volunteeros-v1"', '"oobs-planner-demo-v1"', 1)
@@ -97,8 +161,10 @@ sub("<title>Start Proud VolunteerOS (Copy)</title>",
     "<title>Start Proud VolunteerOS (Copy)</title>\n" + HELPER, 1)
 
 DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's planner. Full version: /planner/full/ ===== */
-/* Presentation Demo buttons and guided tour (we click through by hand) */
-.demo-btn, .demo-top, .tour { display: none !important; }
+/* Presentation Demo: Charlie's guided tour (Team B's steps). Start it from the dashboard. */
+html[data-view="my-schedule"] .demo-top { display: none !important; }
+.oobs-ask-fab.tour-glow { position: fixed !important; z-index: 45 !important; }
+html:has(.tour) .oobs-ask-fab { bottom: auto !important; top: calc(env(safe-area-inset-top, 0px) + 80px) !important; }
 /* Event clock: hidden on every tab. The demo stays at Fri, Apr 30, 10:30 AM. */
 .topbar .clock { display: none !important; }
 
@@ -109,18 +175,21 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 /* Volunteer Directory cards: hide the "Joined [date]" label (it overlapped long names) */
 .vc-joined { display: none !important; }
 
-/* Organizer dashboard, top to bottom: headline, three numbers,
+/* Organizer dashboard, top to bottom: headline, three numbers, the live change,
    Problems reported + Fill open shifts (one-tap changes), Recent changes.
    Parts of both pages are laid out on one grid. */
 html[data-view="dashboard"] .content { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; align-content: start; }
 .dash, .dash ~ .ops, .dash > .kpis, .dash > .status-strip { display: contents; }
 .dash > .hero { grid-column: 1 / -1; order: 1; }
 .dash .kpi, .dash .ss.help { order: 2; }
-/* "Make a live change" (move Desk B) card: removed from the demo */
-.dash ~ .ops > .scenario { display: none; }
+/* Live change card, simplified: what moves where, and one button */
+.dash ~ .ops > .scenario { grid-column: 1 / -1; order: 3; }
+.dash ~ .ops .scenario .scn-aff, .dash ~ .ops .scenario .scn-list,
+.dash ~ .ops .scenario .fld, .dash ~ .ops .scenario .hint { display: none; }
+.dash ~ .ops .scn-loc.from strong { text-decoration: none; }
 .dash ~ .ops > .grid-2 { grid-column: 1 / -1; order: 4; }
 .dash > .grid-2 { grid-column: 1 / -1; order: 5; grid-template-columns: minmax(0, 1fr); }
-.dash ~ .ops > :not(.grid-2) { display: none; }
+.dash ~ .ops > :not(.grid-2):not(.scenario) { display: none; }
 .dash ~ .ops > .grid-2 > .card:not(:has(.issues)):not(:has(.gaps)) { display: none; }
 .dash .hero .eyebrow, .dash .hero .hero-sub, .dash .hero .hero-actions { display: none; }
 .dash .kpis > :nth-child(2), .dash .kpis > :nth-child(3) { display: none; }
