@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ask OOBS · Start Proud volunteer assistant</title>
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="chat">
+  <main class="chat-page" id="ask">
+    <h1 class="chat-page-title">💬 <span data-text="ui.askTitle"></span></h1>
+    <div class="chat-log" id="chat-log" aria-live="polite"></div>
+    <div class="suggestions" id="suggestions"></div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+      <label class="sr-only" for="chat-input" data-text="ui.askTitle"></label>
+      <input id="chat-input" type="text" enterkeyhint="send">
+      <button class="btn" type="submit" data-text="ui.send"></button>
+    </form>
+  </main>
+  <footer class="footer" data-text="ui.footer"></footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>

@@ -17,6 +17,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "planner" / "full" / "index.html"
 OUT = ROOT / "planner" / "index.html"
 
+# Chat shown inside the planner's volunteer view (relative to /planner/).
+CHAT_URL = "../chat.html?id=registration&embed=1"
+
 
 html = SRC.read_text(encoding="utf-8")
 
@@ -131,9 +134,49 @@ html[data-view="my-schedule"] .oobs-org-link {
   color: var(--accent-ink); font: 600 13px var(--f-body); text-decoration: none; }
 @media (max-width: 900px) { html[data-view="my-schedule"] .oobs-org-link { top: calc(env(safe-area-inset-top, 0px) + 12px); } }
 
+
+/* Ask OOBS: small floating button on the volunteer view; the chat slides in over the page */
+.oobs-ask-fab { display: none; }
+html[data-view="my-schedule"] .oobs-ask-fab {
+  display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 45;
+  right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding: 12px 18px; border: 0; border-radius: 99px; cursor: pointer;
+  background: var(--accent); color: #fff; font: 700 15px var(--f-body); box-shadow: var(--shadow-lg); }
+.oobs-chat { position: fixed; inset: 0; z-index: 60; }
+.oobs-chat-backdrop { position: absolute; inset: 0; background: rgba(17, 10, 30, .4); }
+.oobs-chat-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(420px, 100%);
+  background: var(--surface); display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+  padding-top: env(safe-area-inset-top, 0px); }
+.oobs-chat-panel header { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 12px 12px 18px; border-bottom: 1px solid var(--border); font: 700 17px var(--f-display); }
+.oobs-chat-close { width: 40px; height: 40px; border: 0; border-radius: 99px; background: var(--surface-2);
+  color: var(--fg); font-size: 22px; line-height: 1; cursor: pointer; }
+.oobs-chat-panel iframe { flex: 1; width: 100%; border: 0; background: var(--surface); }
+@media (max-width: 600px) {
+  .oobs-chat-panel { top: auto; height: 88%; width: 100%; border-radius: 18px 18px 0 0; padding-top: 0; }
+  html[data-view="my-schedule"] .oobs-ask-fab { padding: 10px 15px; font-size: 14px; }
+}
 </style>
 <div id="root"></div>
-<a class="oobs-org-link" href="#dashboard">← Organizer view</a>"""
+<a class="oobs-org-link" href="#dashboard">← Organizer view</a>
+<button class="oobs-ask-fab" type="button" aria-haspopup="dialog">💬 Ask OOBS</button>
+<div class="oobs-chat" hidden>
+  <div class="oobs-chat-backdrop"></div>
+  <section class="oobs-chat-panel" role="dialog" aria-modal="true" aria-label="Ask OOBS">
+    <header>💬 Ask OOBS<button class="oobs-chat-close" type="button" aria-label="Close chat">×</button></header>
+    <iframe title="Ask OOBS chat"></iframe>
+  </section>
+</div>
+<script>/* Team B: open the Ask OOBS chat in a panel instead of leaving the planner */(function(){
+var fab=document.querySelector('.oobs-ask-fab'),box=document.querySelector('.oobs-chat'),
+frame=box.querySelector('iframe'),close=box.querySelector('.oobs-chat-close');
+function open(){if(!frame.src)frame.src="CHAT_URL";box.hidden=false;close.focus();}
+function shut(){if(box.hidden)return;box.hidden=true;fab.focus();}
+fab.addEventListener('click',open);close.addEventListener('click',shut);
+box.querySelector('.oobs-chat-backdrop').addEventListener('click',shut);
+addEventListener('keydown',function(e){if(e.key==='Escape')shut();});
+addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.oobs==='close-chat')shut();});
+addEventListener('hashchange',function(){box.hidden=true;});})();</script>""".replace("CHAT_URL", CHAT_URL)
 sub('<div id="root"></div>', DEMO_CSS, 1)
 
 OUT.write_text(html, encoding="utf-8")

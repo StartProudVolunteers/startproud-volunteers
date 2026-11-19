@@ -168,7 +168,7 @@
 
     // "My schedule": back to Charlie's planner (volunteer view)
     var sched = data.links && data.links.plannerSchedule;
-    if (sched) {
+    if (sched && !opts.noSchedule) {
       var sl = el("a", { "class": "btn btn-outline btn-small chat-schedule", href: sched }, "🗓️ " + data.ui.myScheduleButton);
       form.parentNode.insertBefore(sl, form.nextSibling);
     }
@@ -235,6 +235,32 @@
     attSheet.body.appendChild(row);
     att.addEventListener("click", function () { attSheet.open(att); });
     box.appendChild(att);
+  }
+
+  /* ---------- chat only (opened inside the planner) ---------- */
+  function renderChatOnly(data) {
+    var params = new URLSearchParams(location.search);
+    var s = stationById(data, params.get("id")) || myStation(data) || data.stations[0];
+    var embed = params.get("embed") === "1";
+    if (embed) {
+      document.documentElement.classList.add("embed");
+      // call / text links must open the phone app, not load inside the panel
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="tel:"], a[href^="sms:"]');
+        if (a) a.target = "_top";
+      });
+      // Escape while typing in the panel: ask the planner to close it
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && window.parent !== window) window.parent.postMessage({ oobs: "close-chat" }, location.origin);
+      });
+    }
+    setupChat(data, {
+      primary: function () { return s.answers; },
+      others: function () { return data.globalAnswers; },
+      lead: function () { return s.lead; },
+      suggested: (s.answers || []).filter(function (a) { return a.suggest; }),
+      noSchedule: embed            // already inside the planner
+    });
   }
 
   /* ---------- stations list ---------- */
@@ -488,6 +514,7 @@
       var page = document.body.getAttribute("data-page");
       if (page === "home") renderHome(data);
       if (page === "stations") renderStations(data);
+      if (page === "chat") renderChatOnly(data);
       if (page === "station") renderStation(data);
       if (page === "myday") renderMyDay(data);
       // arriving from the planner's "Ask OOBS" button: jump to the chat once it's rendered

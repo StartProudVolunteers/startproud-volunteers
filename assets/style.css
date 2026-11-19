@@ -285,3 +285,15 @@ a { color: var(--accent); }
 /* "My schedule" link in the chat (goes to the planner) */
 .chat-schedule { margin-top: 10px; }
 #ask { scroll-margin-top: 70px; }
+
+/* ---------- chat-only page (chat.html, also shown inside the planner) ---------- */
+body[data-page="chat"] { min-height: 100vh; min-height: 100dvh; }
+.chat-page { flex: 1; width: 100%; max-width: 640px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.chat-page-title { font-size: 1.3rem; }
+.chat-page .chat-log { flex: 1; margin: 0; justify-content: flex-end; }
+.chat-page .chat-log:empty { display: flex; }
+.chat-page .suggestions { margin: 0; }
+.chat-page .chat-form { position: sticky; bottom: 0; padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); background: var(--bg); }
+html.embed .chat-page-title, html.embed body[data-page="chat"] .footer { display: none; }
+html.embed body[data-page="chat"] { background: var(--surface); }
+html.embed .chat-page .chat-form { background: var(--surface); }
