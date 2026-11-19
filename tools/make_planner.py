@@ -55,6 +55,18 @@ sub("Alex", "Ava", 7)  # the remaining first-name mentions
 sub("Event Command Centre", "Organizer dashboard", 2)
 sub("Live Operations", "Live changes", 3)
 
+# --- Four tabs with plain names (Live changes is folded into the dashboard) ----
+sub('label:"My Volunteer Schedule",icon:"phone",badge:"Volunteer view"', 'label:"Volunteer schedule",icon:"phone"', 1)
+sub('label:"Interactive Hotel Map",icon:"map"', 'label:"Hotel map",icon:"map"', 1)
+sub('label:"AI Logistics Assistant",icon:"spark"', 'label:"AI assistant",icon:"spark"', 1)
+sub("Demo scenario: Registration Desk B moves to the East Foyer",
+    "Make a live change: move Registration Desk B to the East Foyer", 1)
+# The dashboard page renders the dashboard *and* the Live changes page; CSS below
+# keeps only the Desk B card from the second one and puts it under the numbers.
+sub("ws={dashboard:rt,", "ws={dashboard:OobsDash,", 1)
+sub("function Ss(){", "function OobsDash(){return I.default.createElement(I.default.Fragment,null,"
+    "I.default.createElement(rt,null),I.default.createElement(Nt,null))}function Ss(){", 1)
+
 # --- Own browser storage, so the full version's saved data never leaks in ------
 sub('"start-proud-volunteeros-v1"', '"oobs-planner-demo-v1"', 1)
 sub('"start-proud-volunteeros-ui-v1"', '"oobs-planner-demo-ui-v1"', 1)
@@ -80,26 +92,36 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 /* Presentation Demo buttons and guided tour (we click through by hand) */
 .demo-btn, .demo-top, .tour { display: none !important; }
 
-/* Sidebar: Organizer dashboard, volunteer view, hotel map, Live changes, AI assistant only */
-.nav-item[href="#directory"], .nav-item[href="#assignments"] { display: none !important; }
+/* Four tabs: Organizer dashboard, Volunteer schedule, Hotel map, AI assistant */
+.nav-item[href="#directory"], .nav-item[href="#assignments"], .nav-item[href="#operations"] { display: none !important; }
 
-/* Organizer dashboard: headline, three numbers, Needs attention, Recent changes */
-.dash { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; }
-.dash > .hero, .dash > .grid-2 { grid-column: 1 / -1; }
+/* Organizer dashboard, top to bottom: headline, three numbers, the Desk B live change,
+   Needs attention + Recent changes. Both pages' parts are laid out on one grid. */
+html[data-view="dashboard"] .content { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; align-content: start; }
+.dash, .dash ~ .ops, .dash > .kpis, .dash > .status-strip { display: contents; }
+.dash > .hero { grid-column: 1 / -1; order: 1; }
+.dash .kpi, .dash .ss.help { order: 2; }
+.dash ~ .ops > .scenario { grid-column: 1 / -1; order: 3; }
+.dash > .grid-2 { grid-column: 1 / -1; order: 4; }
+.dash ~ .ops > :not(.scenario) { display: none; }
 .dash .hero .eyebrow, .dash .hero .hero-sub, .dash .hero .hero-actions { display: none; }
-.dash > .kpis, .dash > .status-strip { display: contents; }
 .dash .kpis > :nth-child(2), .dash .kpis > :nth-child(3) { display: none; }
 .dash .status-strip > :not(.help) { display: none; }
+.dash .grid-2 > .card:not(:has(.att-list)):not(:has(.feed)) { display: none; }
+/* No buttons that jump to pages outside the four tabs */
+.dash .kpi, .dash .ss { pointer-events: none; }
+.dash .card-h .btn { display: none; }
 .dash .ss.help { flex-direction: column-reverse; align-items: flex-start; justify-content: flex-end; gap: 4px;
   border-radius: var(--r); padding: 16px 18px 16px 22px; box-shadow: var(--shadow); }
 .dash .ss.help span { font-size: 12px; font-weight: 700; letter-spacing: .03em; color: var(--muted); }
 .dash .ss.help strong { font-size: 34px; font-weight: 750; line-height: 1.05; }
-.dash .grid-2 > .card:not(:has(.att-list)):not(:has(.feed)) { display: none; }
 @media (max-width: 560px) {
-  .dash { gap: 14px 8px; }
+  html[data-view="dashboard"] .content { gap: 14px 8px; }
   .dash .kpi, .dash .ss.help { padding: 12px 10px 12px 14px; }
   .dash .kpi-v, .dash .ss.help strong { font-size: 26px; }
   .dash .kpi-s { display: none; }
+  .dash ~ .ops .scn-done p { display: block; }
+  .dash ~ .ops .scn-done p svg { vertical-align: -3px; margin-right: 4px; }
 }
 
 /* Volunteer view: no sidebar, event clock or login simulator; small link back */

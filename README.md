@@ -111,9 +111,15 @@ Scan one with a phone before printing a batch.
 python3 tools/make_planner.py
 ```
 
-The script changes a few text strings: Hotel X Toronto, Ava Papanikolaou,
-"Organizer dashboard", "Live changes". It also adds the "Ask OOBS" button and
-a stylesheet that hides everything not needed for the demo. If Charlie sends a
+The demo has four tabs: **Organizer dashboard**, **Volunteer schedule**, **Hotel map**
+and **AI assistant**. Charlie's "Live Operations" page is folded into the dashboard:
+only its "move Desk B to the East Foyer" card is kept, shown right under the three
+numbers. Click it during the demo, then open Volunteer schedule to show Ava's shifts
+updating. Use "Reset demo data" in the sidebar to undo it before the next run-through.
+
+The script changes a few text strings (Hotel X Toronto, Ava Papanikolaou, tab names),
+adds the "Ask OOBS" button, makes the dashboard page render the Desk B card too, and
+adds a stylesheet that hides everything not needed for the demo. If Charlie sends a
 new version, copy it over `planner/full/index.html` and re-run the script. It
 stops with an error if any text it expects has changed.
 
