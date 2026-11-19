@@ -281,3 +281,7 @@ a { color: var(--accent); }
   .card { padding: 14px 12px; }
   .msg-bot { padding: 9px 11px; font-size: 14.5px; }
 }
+
+/* "My schedule" link in the chat (goes to the planner) */
+.chat-schedule { margin-top: 10px; }
+#ask { scroll-margin-top: 70px; }

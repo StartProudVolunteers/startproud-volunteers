@@ -49,7 +49,8 @@
       "call": "Call",
       "message": "Message"
     },
-    "close": "Close"
+    "close": "Close",
+    "myScheduleButton": "My schedule"
   },
   "catchUp": {
     "title": "Today's changes",
@@ -242,6 +243,28 @@
       ],
       "answer": "Ground floor, left of the main entrance. It's free.",
       "suggest": false
+    },
+    {
+      "question": "Where did Desk B move?",
+      "suggest": false,
+      "keywords": [
+        "desk b",
+        "desk-b",
+        "deskb",
+        "registration desk b",
+        "relocated"
+      ],
+      "answer": "East Foyer: the glass doors at the east end of the Main Lobby."
+    },
+    {
+      "question": "Where's the East Foyer?",
+      "suggest": false,
+      "keywords": [
+        "east foyer",
+        "foyer east",
+        "glass doors"
+      ],
+      "answer": "Through the glass doors at the east end of the Main Lobby."
     }
   ],
   "stations": [
@@ -991,7 +1014,8 @@
     "callButton": "Call the Volunteer Lead"
   },
   "links": {
-    "_help": "Placeholder for Pransh's map. {station} is replaced with the station id (e.g. registration). A station can override this with its own \"mapUrl\".",
-    "mapUrl": "https://example.com/oobs-map/?station={station}"
+    "_help": "mapUrl: placeholder for Pransh's map; {station} is replaced with the station id. A station can override it with its own \"mapUrl\". plannerSchedule: where the chat's \"My schedule\" button goes (Charlie's planner).",
+    "mapUrl": "https://example.com/oobs-map/?station={station}",
+    "plannerSchedule": "planner/#my-schedule"
   }
 }

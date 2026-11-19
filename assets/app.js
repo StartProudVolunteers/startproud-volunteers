@@ -166,6 +166,13 @@
     }
     form.addEventListener("submit", function (e) { e.preventDefault(); ask(input.value); input.value = ""; });
 
+    // "My schedule": back to Charlie's planner (volunteer view)
+    var sched = data.links && data.links.plannerSchedule;
+    if (sched) {
+      var sl = el("a", { "class": "btn btn-outline btn-small chat-schedule", href: sched }, "🗓️ " + data.ui.myScheduleButton);
+      form.parentNode.insertBefore(sl, form.nextSibling);
+    }
+
     var sugg = byId("suggestions");
     if (sugg && opts.suggested) {
       opts.suggested.slice(0, 3).forEach(function (a) {   // max 3 suggested questions
@@ -483,6 +490,8 @@
       if (page === "stations") renderStations(data);
       if (page === "station") renderStation(data);
       if (page === "myday") renderMyDay(data);
+      // arriving from the planner's "Ask OOBS" button: jump to the chat once it's rendered
+      if (location.hash === "#ask" && byId("ask")) byId("ask").scrollIntoView({ block: "start" });
       addMyDayLinks(data, page === "station" ? new URLSearchParams(location.search).get("id") : null);
     })
     .catch(function (err) {

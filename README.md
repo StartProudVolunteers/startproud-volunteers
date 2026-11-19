@@ -14,6 +14,8 @@ No backend, no build step: plain HTML, CSS and JavaScript.
 | `stations.html` | The station list (linked from "Stations" on the home page) |
 | `station.html?id=…` | One template for all 5 stations (`registration`, `career-fair`, `victory-ballroom`, `green-room`, `volunteer-hq`) |
 | `my-day.html?role=…` | **My day**: pick a role, see a personal timeline and a stacked-floor venue map with your current room highlighted |
+| `planner/` | Charlie's planner, simplified for a 2-minute demo (built by `tools/make_planner.py`) |
+| `planner/full/` | Charlie's original planner, unchanged, for the appendix |
 | `data/content.json` | **Every word in the app.** Edit this, not the code. |
 | `assets/app.js` | Renders the JSON, runs the keyword-matching chat |
 | `assets/style.css` | Styles (light + dark mode) |
@@ -99,3 +101,23 @@ python3 tools/make_qr_cards.py https://<username>.github.io/<repo>/
 
 Print at **100% / Actual size** (not "Fit to page") on card stock, cut on the dashed lines.
 Scan one with a phone before printing a batch.
+
+## Charlie's planner
+
+`planner/full/index.html` is Charlie's file exactly as he sent it. **Don't edit
+`planner/index.html` by hand**: it's generated from the original by
+
+```bash
+python3 tools/make_planner.py
+```
+
+The script changes a few text strings: Hotel X Toronto, Ava Papanikolaou,
+"Organizer dashboard", "Live changes". It also adds the "Ask OOBS" button and
+a stylesheet that hides everything not needed for the demo. If Charlie sends a
+new version, copy it over `planner/full/index.html` and re-run the script. It
+stops with an error if any text it expects has changed.
+
+- The "Ask OOBS" button opens the Registration station chat (`station.html?id=registration#ask`).
+- The chat's "My schedule" button goes back to `planner/#my-schedule` (`links.plannerSchedule`).
+- The demo version saves its data under its own browser-storage keys, so playing with
+  `/planner/full/` doesn't change the demo, and it always opens the volunteer view as Ava.
