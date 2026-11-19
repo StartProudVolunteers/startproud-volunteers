@@ -114,7 +114,7 @@ python3 tools/make_planner.py
 The demo has four tabs: **Organizer dashboard**, **Volunteer schedule**, **Hotel map**
 and **AI assistant**. Charlie's "Live Operations" page is folded into the dashboard:
 only its "move Desk B to the East Foyer" card is kept, shown right under the three
-numbers. Click it during the demo, then open Volunteer schedule to show Ava's shifts
+numbers. The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM. Click it during the demo, then open Volunteer schedule to show Ava's shifts
 updating. Use "Reset demo data" in the sidebar to undo it before the next run-through.
 
 The script changes a few text strings (Hotel X Toronto, Ava Papanikolaou, tab names),

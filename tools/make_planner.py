@@ -87,6 +87,8 @@ sub("<title>Start Proud VolunteerOS (Copy)</title>",
 DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's planner. Full version: /planner/full/ ===== */
 /* Presentation Demo buttons and guided tour (we click through by hand) */
 .demo-btn, .demo-top, .tour { display: none !important; }
+/* Event clock: hidden on every tab. The demo stays at Fri, Apr 30, 10:30 AM. */
+.topbar .clock { display: none !important; }
 
 /* Four tabs: Organizer dashboard, Volunteer schedule, Hotel map, AI assistant */
 .nav-item[href="#directory"], .nav-item[href="#assignments"], .nav-item[href="#operations"] { display: none !important; }
