@@ -51,6 +51,10 @@ sub(", opposite the Front St. entrance", "", 1)
 # --- Main volunteer is Ava Papanikolaou ---------------------------------------
 sub("Alex Morgan", "Ava Papanikolaou", 2)
 sub("Alex", "Ava", 7)  # the remaining first-name mentions
+# Ava uses she/her
+sub('R("v01","Ava Papanikolaou","they/them"', 'R("v01","Ava Papanikolaou","she/her"', 1)
+sub("Ava only sees their own shifts", "Ava only sees her own shifts", 1)
+sub("log in as Ava to see exactly what they see", "log in as Ava to see exactly what she sees", 1)
 
 # --- Renames -------------------------------------------------------------------
 sub("Event Command Centre", "Organizer dashboard", 2)
