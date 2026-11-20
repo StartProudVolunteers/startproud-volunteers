@@ -39,6 +39,7 @@
     return s;
   }
   // primary answers (your station) get a small bonus over the rest
+  var CONTACT_Q = /\b(contact|who handles|who deals|who do i (call|ask|tell|talk to)|escalate|report)/;
   function findAnswer(question, primary, others) {
     var pool = (primary || []).map(function (a) { return { a: a, bonus: 0.5 }; })
       .concat((others || []).map(function (a) { return { a: a, bonus: 0 }; }));
@@ -47,6 +48,8 @@
       var sc = score(question, p.a);
       // safety answers ("escalate": true) always win when they match at all
       if (sc > 0 && p.a.escalate) sc += 1000;
+      // "Who do I contact about ...?" answers win over station answers when the question asks who to contact
+      if (sc > 0 && p.a.contact && CONTACT_Q.test(normalize(question))) sc += 1;
       if (sc > 0 && sc + p.bonus > bestScore) { best = p.a; bestScore = sc + p.bonus; }
     });
     return best;
@@ -505,10 +508,29 @@
     });
   }
 
+  /* ---------- "Who do I contact about ...?" answers, built from data.contacts ---------- */
+  function addContactAnswers(data) {
+    var c = data.contacts;
+    if (!c || !c.types) return;
+    c.types.forEach(function (t) {
+      var owner = t.owner.role + (t.owner.name ? ": " + t.owner.name : "");
+      data.globalAnswers.push({
+        question: (c.chatQuestion || "Who do I contact about {issue}?").replace("{issue}", t.issue.toLowerCase()),
+        keywords: t.keywords || [],
+        answer: t.chatAnswer || (c.chatAnswer || "{owner}. Then {escalation}.")
+          .replace("{owner}", owner).replace("{escalation}", t.escalatesTo.role),
+        escalate: !!t.urgent,   // safety: the red "find the Volunteer Lead" card
+        contact: true,
+        suggest: false
+      });
+    });
+  }
+
   /* ---------- boot ---------- */
   fetch(DATA_URL, { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
+      addContactAnswers(data);
       fillText(data);
       setupCatchUp(data);
       var page = document.body.getAttribute("data-page");

@@ -50,7 +50,8 @@
       "message": "Message"
     },
     "close": "Close",
-    "myScheduleButton": "My schedule"
+    "myScheduleButton": "My schedule",
+    "officialFloorPlan": "View the official floor plan"
   },
   "catchUp": {
     "title": "Today's changes",
@@ -219,7 +220,7 @@
         "missing",
         "left behind"
       ],
-      "answer": "Take it to Volunteer HQ, Room 204, and log it on the clipboard.",
+      "answer": "Take it to Volunteer HQ (Champion's Boardroom, 2nd floor).",
       "suggest": false
     },
     {
@@ -252,19 +253,19 @@
         "desk-b",
         "deskb",
         "registration desk b",
-        "relocated"
+        "relocated",
+        "gallery x"
       ],
-      "answer": "East Foyer: the glass doors at the east end of the Main Lobby."
+      "answer": "Gallery X: next to the coat check, just off the lobby."
     },
     {
-      "question": "Where's the East Foyer?",
+      "question": "Where's Gallery X?",
       "suggest": false,
       "keywords": [
-        "east foyer",
-        "foyer east",
-        "glass doors"
+        "gallery x",
+        "gallery"
       ],
-      "answer": "Through the glass doors at the east end of the Main Lobby."
+      "answer": "Next to the coat check, just off the lobby."
     }
   ],
   "stations": [
@@ -544,7 +545,7 @@
       "id": "volunteer-hq",
       "name": "Volunteer HQ",
       "emoji": "🧭",
-      "floor": "2nd floor — Room 204",
+      "floor": "2nd floor — Champion's Boardroom",
       "shift": "7:30 AM – 6:00 PM",
       "lead": {
         "name": "Jordan Achebe",
@@ -686,8 +687,8 @@
           },
           {
             "id": "hq",
-            "name": "Room 204 — Volunteer HQ",
-            "short": "Rm 204 HQ",
+            "name": "Champion's Boardroom — Volunteer HQ",
+            "short": "Champion's (HQ)",
             "size": 1
           }
         ]
@@ -1007,14 +1008,168 @@
   "escalation": {
     "_help": "Used by any answer with \"escalate\": true (first aid, harassment, safety). These replies always win over other matches.",
     "headline": "Find the Volunteer Lead at HQ now.",
-    "where": "2nd floor, Room 204",
+    "where": "Champion's Boardroom, 2nd floor",
     "name": "Jordan Achebe",
     "phone": "+14165550105",
     "callButton": "Call the Volunteer Lead"
   },
   "links": {
-    "_help": "mapUrl: placeholder for Pransh's map; {station} is replaced with the station id. A station can override it with its own \"mapUrl\". plannerSchedule: where the chat's \"My schedule\" button goes (Charlie's planner).",
+    "_help": "mapUrl: placeholder for Pransh's map; {station} is replaced with the station id. A station can override it with its own \"mapUrl\". plannerSchedule: where the chat's \"My schedule\" button goes (Charlie's planner). officialFloorPlan: the 'View the official floor plan' link on the planner's hotel map. Paste the hotel's PDF link here.",
     "mapUrl": "https://example.com/oobs-map/?station={station}",
-    "plannerSchedule": "planner/#my-schedule"
+    "plannerSchedule": "planner/#my-schedule",
+    "officialFloorPlan": "https://hotelxtoronto.com/"
+  },
+  "contacts": {
+    "_help": "Who handles each kind of problem. Used by the planner's 'Who to contact' card, the volunteer 'I need help' form ('Sent to: ...') and the chatbot ('Who do I contact about ...?'). Role titles are real job titles; names are invented sample data. 'urgent': true shows the red safety card in the chat.",
+    "title": "Who to contact",
+    "intro": "Who handles each kind of problem first, and who it escalates to.",
+    "columns": [
+      "Issue type",
+      "First contact",
+      "Escalates to"
+    ],
+    "question": "What kind of problem is it?",
+    "choose": "Choose one…",
+    "sentTo": "Sent to",
+    "urgentNote": "If a life is in danger, call 911 first.",
+    "chatQuestion": "Who do I contact about {issue}?",
+    "chatAnswer": "{owner}. Then {escalation}.",
+    "types": [
+      {
+        "id": "volunteers",
+        "issue": "Volunteers and schedules",
+        "owner": {
+          "role": "Volunteer Coordinator",
+          "name": "Dana Whitfield"
+        },
+        "escalatesTo": {
+          "role": "Logistics Director",
+          "name": "Priya Natarajan"
+        },
+        "keywords": [
+          "volunteer",
+          "volunteers",
+          "schedule",
+          "schedules",
+          "shift",
+          "shifts",
+          "no-show",
+          "coverage",
+          "rota"
+        ]
+      },
+      {
+        "id": "attendees",
+        "issue": "Attendees, registration and badges",
+        "owner": {
+          "role": "Guest Services Coordinator",
+          "name": "Malik Osei"
+        },
+        "escalatesTo": {
+          "role": "Logistics Director",
+          "name": "Priya Natarajan"
+        },
+        "keywords": [
+          "attendee",
+          "attendees",
+          "registration",
+          "badge",
+          "badges",
+          "guest",
+          "guests",
+          "check-in",
+          "ticket"
+        ]
+      },
+      {
+        "id": "sponsors",
+        "issue": "Sponsor booths and complaints",
+        "owner": {
+          "role": "Sponsor Liaison",
+          "name": "Hannah Lefebvre"
+        },
+        "escalatesTo": {
+          "role": "Sponsorship Director",
+          "name": "Rafael Moreno"
+        },
+        "keywords": [
+          "sponsor booth",
+          "booth",
+          "booths",
+          "complaint",
+          "complaints",
+          "sponsor complaint",
+          "exhibitor",
+          "recruiter"
+        ]
+      },
+      {
+        "id": "contracts",
+        "issue": "Sponsor contracts and big concerns",
+        "owner": {
+          "role": "Sponsorship Director",
+          "name": "Rafael Moreno"
+        },
+        "escalatesTo": {
+          "role": "Senior Leadership",
+          "name": ""
+        },
+        "keywords": [
+          "contract",
+          "contracts",
+          "sponsor contract",
+          "big concern",
+          "serious concern",
+          "agreement",
+          "legal"
+        ]
+      },
+      {
+        "id": "media",
+        "issue": "Media and marketing",
+        "owner": {
+          "role": "Marketing Director",
+          "name": "Simone Achterberg"
+        },
+        "escalatesTo": {
+          "role": "Senior Leadership",
+          "name": ""
+        },
+        "keywords": [
+          "media",
+          "press",
+          "journalist",
+          "reporter",
+          "marketing",
+          "interview",
+          "photographer",
+          "social media",
+          "camera"
+        ]
+      },
+      {
+        "id": "safety",
+        "issue": "Safety or medical",
+        "urgent": true,
+        "owner": {
+          "role": "Volunteer Lead",
+          "name": "Jordan Achebe",
+          "note": "right away"
+        },
+        "escalatesTo": {
+          "role": "911 first if a life is in danger",
+          "name": ""
+        },
+        "chatAnswer": "Get the Volunteer Lead right away. Life in danger? Call 911 first.",
+        "keywords": [
+          "safety",
+          "medical",
+          "injury",
+          "emergency",
+          "unsafe",
+          "first aid"
+        ]
+      }
+    ]
   }
 }

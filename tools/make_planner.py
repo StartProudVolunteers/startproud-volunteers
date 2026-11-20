@@ -19,16 +19,19 @@ OUT = ROOT / "planner" / "index.html"
 
 # Chat shown inside the planner's volunteer view (relative to /planner/).
 CHAT_URL = "../chat.html?id=registration&embed=1"
+# The note volunteers get when Desk B moves (also used by the Presentation Demo).
+DESK_B_NOTE = "Lobby is crowded at the main doors. Desk B is now in Gallery X, next to the coat check, just off the lobby."
 
 
 html = SRC.read_text(encoding="utf-8")
 
 
 def sub(old, new, count):
-    """Replace exactly `count` occurrences of `old`, or stop with an error."""
+    """Replace exactly `count` occurrences of `old`, or stop with an error.
+    count=None replaces however many there are (used for catch-all renames)."""
     global html
     found = html.count(old)
-    if found != count:
+    if count is not None and found != count:
         raise SystemExit(f"Expected {count}x {old!r}, found {found}. Has the original changed?")
     html = html.replace(old, new)
 
@@ -116,7 +119,7 @@ STEPS = [
   ('Every room, every floor', NOTHING,
    "Every room, on every floor",
    MAP + ',window.oobsMapPick("floors","Ground Floor"),window.oobsMapPick("days","Both days")'),
-  ('The East Foyer', 'sel:\'.fp-room[aria-label="East Foyer"]\'',
+  ('Gallery X', 'sel:\'.fp-room[aria-label="Gallery X"]\'',
    "Desk B's new home, updated live",
    'e.setVolDrawer(null),e.setPortalTask(null),e.showOnMap("eastFoyer",null),window.oobsMapPick("days","Both days")'),
   ('Right now', 'sel:\'.map-page .toolbar > .seg:not(.floors) button.on, [data-tour="floorplan"]\'',
@@ -138,7 +141,7 @@ def _step(t):
     title, where, say, enter = t
     extra = ''
     if 'action:' in where:
-        extra = ',next:({data:e})=>{e.state.scenarioDone||e.relocateDeskB("Lobby is crowded at the main doors. Use the glass doors at the east end of the lobby.")}'
+        extra = ',next:({data:e})=>{e.state.scenarioDone||e.relocateDeskB(' + _json.dumps(DESK_B_NOTE) + ')}'
     # every step first closes the Ask OOBS chat, so Back from the last step works
     return ('{title:' + _json.dumps(title) + ',' + where + ',say:' + _json.dumps(say) +
             ',enter:({ui:e})=>{window.oobsCloseChat&&window.oobsCloseChat();' + enter + '}' + extra + '}')
@@ -146,6 +149,153 @@ NEW_TOUR = 'var Je=[' + ','.join(_step(t) for t in STEPS) + '];function St(){'
 _a = html.index('var Je=[{title:"The Organizer dashboard"')
 _b = html.index('}}];function St(){', _a) + len('}}];function St(){')
 html = html[:_a] + NEW_TOUR + html[_b:]
+
+# --- Hotel X Toronto map -------------------------------------------------------------
+# A simple schematic drawn here (not the hotel's floor-plan images). Room IDs are
+# Charlie's, so every schedule still works; only names, floors and positions change.
+# Cinema, Humber A & B and Library Club Lounge are new rooms.
+import json as _j
+ROOMS = {
+  # Ground floor
+  "lobby":     {"name": "Hotel Lobby", "floor": "G", "directions": "Come in through the main hotel entrance off the Lake Shore Blvd driveway. The lobby is straight ahead."},
+  "regA":      {"name": "Registration Desk A", "floor": "G", "inside": "Hotel Lobby", "directions": "Left side of the Hotel Lobby, by the Library. Handles surnames A–L."},
+  "regB":      {"name": "Registration Desk B", "floor": "G", "inside": "Hotel Lobby", "directions": "Right side of the Hotel Lobby, by Reception. Handles surnames M–Z and walk-ins."},
+  "eastFoyer": {"name": "Gallery X", "floor": "G", "directions": "Next to the coat check, just off the lobby."},
+  "staff":     {"name": "New Fort Hall", "floor": "G", "directions": "North side of the ground floor, facing Princes' Blvd."},
+  "cinema":    {"name": "Cinema", "floor": "G", "directions": "North-west corner of the ground floor, past Gallery X."},
+  # Second floor
+  "wsA":       {"name": "Riverdale A", "floor": "2", "directions": "Floor 2, north side, past the breakout space."},
+  "wsB":       {"name": "Riverdale B", "floor": "2", "directions": "Floor 2, north side, next to Riverdale A."},
+  "lounge":    {"name": "Coronation A–C", "floor": "2", "directions": "Floor 2, west wing. Coronation A, B and C open into one room for employer networking."},
+  "humber":    {"name": "Humber A & B", "floor": "2", "directions": "Floor 2, west wing, across the breakout space from Coronation. Resume reviews."},
+  "ops":       {"name": "Champion's Boardroom", "floor": "2", "directions": "Floor 2, north-east corner. Volunteer HQ: radios and lanyards are issued here."},
+  "prefunction": {"name": "Breakout Space", "floor": "2", "directions": "Floor 2, the open area in front of the elevator lobby."},
+  "breakRoom": {"name": "Café X", "floor": "2", "directions": "Floor 2, by the coat check. Volunteer breaks: snacks, water and charging."},
+  # Third floor
+  "ballroom":  {"name": "Victory Ballroom", "floor": "3", "directions": "Floor 3. Turn left from the elevators; the ballroom fills the west side."},
+  "reception": {"name": "Princes' Gates Ballroom", "floor": "3", "directions": "Floor 3, north side, past the breakout space."},
+  "libraryClub": {"name": "Library Club Lounge", "floor": "3", "directions": "Floor 3, south side, by the terrace. Evening reception."},
+  "speakerPrep": {"name": "Bow Tie", "floor": "3", "directions": "Floor 3, beside the Princes' Gates Ballroom. Speaker green room: speakers and staff only."},
+  "quiet":     {"name": "Pearl Room", "floor": "3", "directions": "Floor 3, east side. Quiet room: low light, no conversations inside."},
+}
+def _room(i, r):
+    return dict({"id": i}, **r)
+_a = html.index('_={lobby:{id:"lobby"')
+_b = html.index('}}', html.index('ops:{id:"ops"', _a)) + 2
+html = html[:_a] + '_={' + ','.join('%s:%s' % (i, _j.dumps(_room(i, r))) for i, r in ROOMS.items()) + '}' + html[_b:]
+
+def R(i, x, y, w, h, lines, sub=None, ly=None):
+    r = {"id": i, "x": x, "y": y, "w": w, "h": h, "lines": lines}
+    if sub: r["sub"] = sub
+    if ly: r["ly"] = ly
+    return r
+def F(x, y, w, h, label):
+    return {"x": x, "y": y, "w": w, "h": h, "label": label}
+PLANS = {
+  # the first room listed is the one selected when you switch to that floor
+  "G": {"rooms": [R("lobby", 250, 215, 510, 345, ["Hotel Lobby"], sub="Accessibility desk by the doors", ly=255),
+                  R("cinema", 50, 50, 180, 150, ["Cinema"]),
+                  R("eastFoyer", 250, 50, 200, 150, ["Gallery X"]),
+                  R("staff", 620, 50, 330, 150, ["New Fort Hall"]),
+                  R("regA", 290, 300, 190, 100, ["Registration", "Desk A"]),   # under 200 wide: no "1 now" tag over the label
+                  R("regB", 530, 300, 190, 100, ["Registration", "Desk B"])],
+        "fixed": [F(470, 50, 130, 150, "Coat Check"), F(50, 215, 180, 345, "Library"),
+                  F(780, 215, 170, 150, "Reception"), F(780, 410, 170, 70, "Elevator Lobby"),
+                  F(780, 490, 170, 70, "Washrooms")],
+        "doors": [{"x": 300, "y": 580, "tx": 315, "ty": 573, "label": "Main entrance · Lake Shore Blvd driveway"},
+                  {"x": 440, "y": 20, "tx": 455, "ty": 40, "label": "Princes' Blvd (north side)"}]},
+  "2": {"rooms": [R("wsA", 290, 50, 180, 150, ["Riverdale A"], sub="Workshops"),
+                  R("humber", 50, 50, 220, 150, ["Humber A & B"], sub="Resume reviews"),
+                  R("wsB", 490, 50, 180, 150, ["Riverdale B"], sub="Workshops"),
+                  R("ops", 690, 50, 260, 150, ["Champion's", "Boardroom"], sub="Volunteer HQ"),
+                  R("prefunction", 290, 215, 380, 150, ["Breakout Space"]),
+                  R("breakRoom", 690, 215, 260, 150, ["Café X"], sub="Volunteer breaks"),
+                  R("lounge", 50, 410, 580, 150, ["Coronation A · B · C"], sub="Employer networking")],
+        "fixed": [F(50, 215, 220, 70, "Coat Check"), F(50, 295, 220, 70, "Breakout Space"),
+                  F(650, 410, 150, 150, "Elevator Lobby"), F(820, 410, 130, 150, "Washrooms")],
+        "doors": []},
+  "3": {"rooms": [R("ballroom", 50, 50, 220, 510, ["Victory", "Ballroom"], sub="Keynote · lunch"),
+                  R("reception", 290, 50, 300, 150, ["Princes' Gates", "Ballroom"], sub="Evening reception"),
+                  R("speakerPrep", 610, 50, 160, 150, ["Bow Tie"], sub="Green room"),
+                  R("quiet", 790, 50, 160, 150, ["Pearl Room"], sub="Quiet room"),
+                  R("libraryClub", 290, 410, 660, 150, ["Library Club Lounge"], sub="Evening reception")],
+        "fixed": [F(290, 215, 300, 150, "Breakout Space"), F(610, 215, 160, 150, "Elevator Lobby"),
+                  F(790, 215, 160, 150, "Washrooms")],
+        "doors": []},
+}
+_a = html.index('Qt={G:{rooms:[')
+_b = html.index('doors:[]}}', _a) + len('doors:[]}}')
+html = html[:_a] + 'Qt={' + ','.join('%s:%s' % (k if k == "G" else '"%s"' % k, _j.dumps(v)) for k, v in PLANS.items()) + '}' + html[_b:]
+# the planner's own floor-plan sketch had a vertical corridor line on floors 2 and 3
+sub('e!=="G"&&x.default.createElement("rect",{x:"258",y:"40",width:"4",height:"520",className:"fp-corridor"})', '!1', 1)
+# Resume reviews happen in Humber A & B (the one shift that moves rooms). Charlie's sample
+# data picks volunteers partly by room, so let it build the schedule first, then move it:
+# everyone keeps exactly the same shifts.
+sub("function ut(){let e=Bt.map(", "function ut(){let s=oobsSeed(),r=s.assignments.find(a=>a.id===\"a27\");r&&(r.room=\"humber\");return s}function oobsSeed(){let e=Bt.map(", 1)
+
+sub('"Elevators, stairs, accessible washrooms"', '"Hotel spaces: coat check, lobbies, washrooms"', 1)
+
+# "Who to contact": the table lives in data/content.json and is read while the page runs
+# (components and helpers are in the script added after #root below).
+sub("I.default.createElement(rt,null),I.default.createElement(Nt,null))",
+    "I.default.createElement(rt,null),I.default.createElement(Nt,null),I.default.createElement(window.OobsContacts,null))", 1)
+# Volunteer "I need help" form: ask the issue type, confirm "Sent to: <owner>"
+sub('onSubmit:E=>{E.preventDefault(),l(n.id,f,e.name),S(!1),u.toast(`${v.name} and Operations can now see your request`)}},'
+    'a.default.createElement("label",{htmlFor:"help-note"}',
+    'onSubmit:E=>{E.preventDefault();let oS=window.oobsSentTo((document.getElementById("oobs-help-type")||{}).value);'
+    'l(n.id,oS?`[${oS.issue}] ${f}`.trim():f,e.name),S(!1),u.toast(oS?oS.text:`${v.name} and Operations can now see your request`)}},'
+    'a.default.createElement(window.OobsIssueType,null),a.default.createElement("label",{htmlFor:"help-note"}', 1)
+# Hotel map: "View the official floor plan" link next to the floor / day buttons
+sub('onClick:()=>m(v)},q)))),x.default.createElement("div",{className:"map-layout"}',
+    'onClick:()=>m(v)},q))),x.default.createElement(window.OobsFloorPlanLink,null)),x.default.createElement("div",{className:"map-layout"}', 1)
+
+# Desk B now moves from the Hotel Lobby to Gallery X
+sub("Live change: move Desk B to the East Foyer", "Live change: move Desk B to Gallery X", 1)
+sub("Registration Desk B has moved to the East Foyer", "Registration Desk B has moved to Gallery X", 1)
+sub("now in the East Foyer, ground floor", "now in Gallery X, next to the coat check, just off the lobby", 1)
+sub("from the Main Lobby to the East Foyer", "from the Hotel Lobby to Gallery X", 1)
+sub("Desk B relocated to East Foyer (lobby crowding)", "Desk B relocated to Gallery X (lobby crowding)", 1)
+sub("Moved to the East Foyer; signage needs updating.", "Moved to Gallery X; signage needs updating.", 1)
+sub("Main Lobby, east side \\xB7 Ground floor", "Hotel Lobby \\xB7 Ground floor", 1)
+sub('"To"),o.default.createElement("strong",null,"East Foyer")', '"To"),o.default.createElement("strong",null,"Gallery X")', 1)
+sub("Glass doors at the east end of the lobby \\xB7 Ground floor", "Next to the coat check, just off the lobby \\xB7 Ground floor", 1)
+sub("Desk B is now in the East Foyer.", "Desk B is now in Gallery X.", 1)
+sub("See East Foyer on the map", "See Gallery X on the map", 1)
+sub('"Lobby is crowded at the main doors. Use the glass doors at the east end of the lobby."', _j.dumps(DESK_B_NOTE), 1)
+sub("Optional note, e.g. Use the glass doors at the east end", "Optional note, e.g. Gallery X is next to the coat check", 1)
+
+# Old room names in Charlie's shift instructions, issues and notifications
+for old, new in [
+  ("Enter through the Staff Entrance and", "Enter through the main hotel entrance and"),
+  ("move them to the Staff Entrance", "move them to the loading dock"),
+  ("orientation in the Volunteer Break Room (Suite 305, 3rd floor)", "orientation in Café X (2nd floor)"),
+  ("orientation in the Volunteer Break Room", "orientation in Café X"),
+  ("the Volunteer Break Room on Floor 3", "Café X on Floor 2"),
+  ("the Operations Command Centre", "Champion's Boardroom (Volunteer HQ)"),
+  ("Direct guests to the escalator for the 9:00 AM keynote", "Direct guests to the elevators for the 9:00 AM keynote on Floor 3"),
+  ("Stand at the top of the escalator with the floor map", "Stand in the second-floor Breakout Space with the floor map"),
+  ("at the top of the escalator on Floor 2", "in the second-floor Breakout Space"),
+  ("Accessibility Desk (west side of the Main Lobby)", "Accessibility Desk (in the Hotel Lobby, by the main doors)"),
+  ("the Speaker Preparation Room (Suite 302)", "the Bow Tie green room (Floor 3)"),
+  ("main ballroom doors on Floor 2", "Victory Ballroom doors on Floor 3"),
+  ("keynote on Floor 2", "keynote on Floor 3"),
+  ("Grand Ballroom", "Victory Ballroom"),
+  ("Workshop Room A (Room 204)", "Riverdale A"), ("Workshop Room B (Room 206)", "Riverdale B"),
+  ("Workshop Rooms A and B and the Networking Lounge", "Riverdale A and B and the Coronation rooms"),
+  ("the Employer Networking Lounge", "Coronation A–C"),
+  ("the Networking Lounge", "the Coronation rooms"),
+  ("the Quiet Room (Suite 308) on Floor 3", "the Pearl Room (quiet room) on Floor 3"),
+  ("the Quiet Room (Suite 308)", "the Pearl Room (quiet room)"),
+  ("Deliver the Quiet Room supply kit to Suite 308", "Deliver the quiet room supply kit to the Pearl Room"),
+  ("from the elevators to Suite 308", "from the elevators to the Pearl Room"),
+  ("the coat check and the Quiet Room on Floor 3", "the coat check and the Pearl Room (quiet room) on Floor 3"),
+  ("Quiet Room", "Pearl Room"),
+  ("in the Reception Area", "in the Princes' Gates Ballroom"),
+  ("at the Reception Area welcome table", "at the Princes' Gates Ballroom welcome table"),
+  ("Main Lobby", "Hotel Lobby"),
+  ("East Foyer", "Gallery X"),
+]:
+    sub(old, new, None)
 
 # --- Own browser storage, so the full version's saved data never leaks in ------
 sub('"start-proud-volunteeros-v1"', '"oobs-planner-demo-v1"', 1)
@@ -158,6 +308,8 @@ sub("<!doctype html><html>", '<!doctype html><html data-theme="light">', 1)
 HELPER = """<script>/* Team B demo helper */(function(){var d=document.documentElement;
 function v(){d.setAttribute('data-view',(location.hash||'#dashboard').slice(1)||'dashboard')}
 v();addEventListener('hashchange',v);
+/* Shared text from ../data/content.json (Who to contact table, official floor plan link) */
+fetch('../data/content.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(j){window.OOBS_DATA=j;dispatchEvent(new Event('oobs-data'));}).catch(function(){});
 /* Presentation Demo: press the hotel map's own floor / day buttons (they are internal to Charlie's code) */
 window.oobsMapPick=function(group,label){setTimeout(function(){
 var seg=document.querySelector('.map-page .toolbar > .seg'+(group==='floors'?'.floors':':not(.floors)'));if(!seg)return;
@@ -211,7 +363,8 @@ html[data-view="dashboard"] .content { display: grid; grid-template-columns: rep
 .dash ~ .ops .scenario .fld, .dash ~ .ops .scenario .hint { display: none; }
 .dash ~ .ops .scn-loc.from strong { text-decoration: none; }
 .dash ~ .ops > .grid-2 { grid-column: 1 / -1; order: 4; }
-.dash > .grid-2 { grid-column: 1 / -1; order: 5; grid-template-columns: minmax(0, 1fr); }
+.content > .oobs-contacts { grid-column: 1 / -1; order: 5; }
+.dash > .grid-2 { grid-column: 1 / -1; order: 6; grid-template-columns: minmax(0, 1fr); }
 .dash ~ .ops > :not(.grid-2):not(.scenario) { display: none; }
 .dash ~ .ops > .grid-2 > .card:not(:has(.issues)):not(:has(.gaps)) { display: none; }
 .dash .hero .eyebrow, .dash .hero .hero-sub, .dash .hero .hero-actions { display: none; }
@@ -270,8 +423,60 @@ html[data-view="my-schedule"] .oobs-ask-fab {
   .oobs-chat-panel { top: auto; height: 88%; width: 100%; border-radius: 18px 18px 0 0; padding-top: 0; }
   html[data-view="my-schedule"] .oobs-ask-fab { padding: 10px 15px; font-size: 14px; }
 }
+
+/* "Who to contact" card */
+.oobs-contacts-wrap { overflow-x: auto; }
+.oobs-contacts-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.oobs-contacts-tbl th { text-align: left; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 0 10px 8px; border-bottom: 1px solid var(--border); }
+.oobs-contacts-tbl td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.oobs-contacts-tbl td strong { display: block; font-weight: 650; }
+.oobs-contacts-tbl td span { color: var(--muted); }
+.oobs-contacts-tbl td em { display: block; font-style: normal; color: var(--crit); font-weight: 650; }
+.oobs-contacts-tbl td.issue { font-weight: 600; }
+.oobs-contacts-tbl tr.urgent td { background: var(--crit-soft); }
+.oobs-contacts-tbl tr:last-child td { border-bottom: 0; }
+@media (max-width: 560px) {
+  .oobs-contacts-tbl thead { display: none; }
+  .oobs-contacts-tbl, .oobs-contacts-tbl tbody, .oobs-contacts-tbl tr, .oobs-contacts-tbl td { display: block; width: 100%; }
+  .oobs-contacts-tbl tr { border-bottom: 1px solid var(--border); padding: 8px 0; }
+  .oobs-contacts-tbl tr.urgent { background: var(--crit-soft); border-radius: 10px; padding: 8px; }
+  .oobs-contacts-tbl td { border: 0; padding: 2px 0; background: none !important; }
+  .oobs-contacts-tbl td:nth-child(2)::before { content: "First: "; color: var(--muted); }
+  .oobs-contacts-tbl td:nth-child(3)::before { content: "Then: "; color: var(--muted); }
+  .oobs-contacts-tbl td:nth-child(n+2) strong, .oobs-contacts-tbl td:nth-child(n+2) span { display: inline; }
+  .oobs-contacts-tbl td:nth-child(n+2) span::before { content: " · "; }
+}
+/* "I need help" form: issue type */
+.oobs-issue-type { display: flex; flex-direction: column; gap: 6px; font-weight: 600; margin-bottom: 4px; }
+.oobs-issue-type select { font: inherit; font-weight: 500; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--border-2); background: var(--surface); color: var(--fg); }
+/* Hotel map: official floor plan link */
+.map-page .toolbar { flex-wrap: wrap; }
+.oobs-official { margin-left: auto; text-decoration: none; }
 </style>
 <div id="root"></div>
+<script>/* Team B: small React components used inside Charlie's planner */(function(){
+function useData(){var R=window.React,s=R.useState(window.OOBS_DATA||null);
+R.useEffect(function(){function f(){s[1](window.OOBS_DATA)}addEventListener('oobs-data',f);f();return function(){removeEventListener('oobs-data',f)}},[]);return s[0];}
+function who(p){return p.role+(p.name?' ('+p.name+')':'')+(p.note?' '+p.note:'');}
+window.oobsSentTo=function(id){var c=window.OOBS_DATA&&window.OOBS_DATA.contacts;if(!c||!id)return null;
+var t=c.types.filter(function(x){return x.id===id})[0];if(!t)return null;
+return {issue:t.issue,text:(c.sentTo||'Sent to')+': '+who(t.owner)+(t.urgent&&c.urgentNote?'. '+c.urgentNote:'')};};
+window.OobsContacts=function(){var R=window.React,h=R.createElement,d=useData(),c=d&&d.contacts;if(!c)return null;
+var col=c.columns||['Issue type','First contact','Escalates to'];
+function cell(p){return h('td',null,h('strong',null,p.role),p.name?h('span',null,p.name):null,p.note?h('em',null,p.note):null);}
+return h('section',{className:'card oobs-contacts','data-tour':'contacts'},
+ h('header',{className:'card-h'},h('div',null,h('h3',null,c.title),h('p',{className:'sub'},c.intro))),
+ h('div',{className:'oobs-contacts-wrap'},h('table',{className:'oobs-contacts-tbl'},
+  h('thead',null,h('tr',null,col.map(function(x){return h('th',{key:x},x)}))),
+  h('tbody',null,c.types.map(function(t){return h('tr',{key:t.id,className:t.urgent?'urgent':''},
+   h('td',{className:'issue'},t.issue),cell(t.owner),cell(t.escalatesTo));})))));};
+window.OobsIssueType=function(){var R=window.React,h=R.createElement,d=useData(),c=d&&d.contacts;if(!c)return null;
+return h('label',{className:'oobs-issue-type',htmlFor:'oobs-help-type'},h('span',null,c.question),
+ h('select',{id:'oobs-help-type',required:true,defaultValue:''},h('option',{value:'',disabled:true},c.choose),
+  c.types.map(function(t){return h('option',{key:t.id,value:t.id},t.issue)})));};
+window.OobsFloorPlanLink=function(){var R=window.React,h=R.createElement,d=useData(),u=d&&d.links&&d.links.officialFloorPlan;if(!u)return null;
+return h('a',{className:'btn sm oobs-official',href:u,target:'_blank',rel:'noopener'},(d.ui&&d.ui.officialFloorPlan)||'View the official floor plan',' ↗');};
+})();</script>
 <a class="oobs-org-link" href="#dashboard">← Organizer view</a>
 <button class="oobs-ask-fab" type="button" aria-haspopup="dialog">💬 Ask OOBS</button>
 <div class="oobs-chat" hidden>

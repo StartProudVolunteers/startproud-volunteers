@@ -117,11 +117,41 @@ The event clock is hidden, so the demo always shows Fri, Apr 30, 10:30 AM.
 
 The dashboard is where organizers make changes, top to bottom:
 1. Three numbers. "Need attention" = open problems + tasks flagged as needing help.
-2. **Live change**: one button moves Registration Desk B to the East Foyer and tells
+2. **Live change**: one button moves Registration Desk B from the Hotel Lobby to Gallery X
+   (next to the coat check, just off the lobby) and tells
    every volunteer working there.
 3. **Problems reported**: one tap to Resolve, or type a new problem and tap Report.
 4. **Fill open shifts**: one tap ("Add Avery") puts a free volunteer on a short-staffed shift.
 5. **Recent changes**: every edit above shows up here.
+
+### Hotel X map
+
+The planner's hotel map is a simple schematic of Hotel X Toronto drawn by
+`tools/make_planner.py` (`ROOMS` and `PLANS`). It is not the hotel's floor-plan
+images and not to scale. Charlie's room IDs are kept, so every shift still works;
+only names, floors and positions changed:
+
+| Floor | Rooms |
+|---|---|
+| Ground | Hotel Lobby (Registration Desks A and B, accessibility desk), Gallery X, New Fort Hall, Cinema; Coat Check, Library, Reception, Elevator Lobby, Washrooms |
+| Second | Riverdale A and B (workshops), Coronation A–C (employer networking), Humber A & B (resume reviews), Champion's Boardroom (Volunteer HQ), Breakout Space, Café X (volunteer breaks); Coat Check, Elevator Lobby, Washrooms |
+| Third | Victory Ballroom (keynote, lunch), Princes' Gates Ballroom and Library Club Lounge (evening reception), Bow Tie (speaker green room), Pearl Room (quiet room); Breakout Space, Elevator Lobby, Washrooms |
+
+"View the official floor plan" on the map uses `links.officialFloorPlan` in
+`data/content.json`. **It points at hotelxtoronto.com for now: paste the hotel's PDF link there.**
+
+### Who to contact
+
+`contacts` in `data/content.json` is one table (issue type, first contact, who it
+escalates to) used in three places, read live, so no rebuild is needed after editing:
+
+- the **Who to contact** card on the Organizer dashboard
+- the volunteer **I need help** form (open a shift on the Volunteer dashboard): it asks
+  "What kind of problem is it?" and confirms **Sent to: <owner>**
+- the chatbot: one "Who do I contact about ...?" answer per row. Safety or medical
+  shows the red "find the Volunteer Lead" card.
+
+Role titles are real job titles; every name is invented.
 
 ### Presentation Demo
 
@@ -140,7 +170,7 @@ Page Up = back. These keys are ignored while someone is typing in a text box.
 | 3 | Charlie | Problems and open shifts | Problems and empty shifts, fixed in one tap | Both cards glow |
 | 4 | Charlie | Ava's itinerary | Ava's itinerary, set by organizers | Volunteer Directory with Ava's profile open |
 | 5 | Pransh | Every room, every floor | Every room, on every floor | Hotel map, Ground Floor, nothing highlighted |
-| 6 | Pransh | The East Foyer | Desk B's new home, updated live | East Foyer glows |
+| 6 | Pransh | Gallery X | Desk B's new home, updated live | Gallery X glows |
 | 7 | Pransh | Right now | What's happening in every room right now | Map switches to its "Now" filter |
 | 8 | Jordan | Ava's dashboard | Ava's day, on her phone | Up next glows |
 | 9 | Jordan | Changes reach her | Changes reach her automatically | The "Desk B has moved" note glows |
