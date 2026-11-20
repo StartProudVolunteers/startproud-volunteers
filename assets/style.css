@@ -297,3 +297,7 @@ body[data-page="chat"] { min-height: 100vh; min-height: 100dvh; }
 html.embed .chat-page-title, html.embed body[data-page="chat"] .footer { display: none; }
 html.embed body[data-page="chat"] { background: var(--surface); }
 html.embed .chat-page .chat-form { background: var(--surface); }
+
+/* "Try asking" suggestion (sent by the planner's Presentation Demo) */
+.try-label { width: 100%; margin: 0; }
+.chip-try { background: var(--accent); color: var(--accent-ink); font-weight: 600; }

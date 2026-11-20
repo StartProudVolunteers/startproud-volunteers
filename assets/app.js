@@ -256,14 +256,42 @@
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && window.parent !== window) window.parent.postMessage({ oobs: "close-chat" }, location.origin);
       });
+      // Presentation clicker: pass Next / Back keys up to the planner's tour,
+      // unless someone is typing in the chat box
+      document.addEventListener("keydown", function (e) {
+        if (window.parent === window || e.altKey || e.ctrlKey || e.metaKey) return;
+        var a = document.activeElement, t = a && a.tagName;
+        if (t === "INPUT" || t === "TEXTAREA" || (a && a.isContentEditable)) return;
+        var k = (e.key === " " || e.key === "ArrowRight" || e.key === "PageDown") ? "next"
+              : (e.key === "ArrowLeft" || e.key === "PageUp") ? "back" : null;
+        if (!k) return;
+        e.preventDefault();
+        if (!e.repeat) window.parent.postMessage({ oobs: "tour-key", k: k }, location.origin);
+      });
     }
-    setupChat(data, {
+    var chat = setupChat(data, {
       primary: function () { return s.answers; },
       others: function () { return data.globalAnswers; },
       lead: function () { return s.lead; },
       suggested: (s.answers || []).filter(function (a) { return a.suggest; }),
       noSchedule: embed            // already inside the planner
     });
+    // The planner's Presentation Demo can suggest one question to try
+    function trySuggestion(q) {
+      if (!q) return;
+      var box = byId("suggestions");
+      box.innerHTML = "";
+      box.appendChild(el("p", { "class": "fact-label sugg-label try-label" }, data.ui.tryAsking || "Try asking"));
+      var chip = el("button", { "class": "chip chip-try", type: "button" }, q);
+      chip.addEventListener("click", function () { chat.ask(q); });
+      box.appendChild(chip);
+    }
+    trySuggestion(params.get("suggest"));
+    window.addEventListener("message", function (e) {
+      if (e.origin === location.origin && e.data && e.data.oobs === "suggest") trySuggestion(e.data.q);
+    });
+    // tell the planner the chat is ready, so it can send a suggestion
+    if (embed && window.parent !== window) window.parent.postMessage({ oobs: "chat-ready" }, location.origin);
   }
 
   /* ---------- stations list ---------- */

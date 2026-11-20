@@ -98,6 +98,9 @@ sub('let S=document.querySelector(`[data-tour="${Je[s.step].target}"]`);S&&(S.cl
 # top, so doing it on every step made the view bounce up and back down.
 def go(page):
     return '(e.page!=="%s"&&e.go("%s"))' % (page, page)
+import json as _jq
+def _json_q(t): return _jq.dumps(t)
+ASK_OOBS_SUGGESTION = "Who do I tell about a sponsor complaint?"   # suggested in the chat on the last step
 DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),' + go("dashboard")
 PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),' + go("my-schedule")
 MAP = 'e.setVolDrawer(null),e.setPortalTask(null),e.setMapFocus(null),' + go("map")
@@ -110,8 +113,8 @@ STEPS = [
    "The whole event on one screen", DASH),
   ('Move Desk B', 'target:"scenario",action:"Move Desk B now"',          # Next moves Desk B
    "One tap moves Desk B and tells 4 volunteers", DASH),
-  ('Problems and open shifts', 'sel:".dash ~ .ops .card:has(.issues), .dash ~ .ops .card:has(.gaps)"',
-   "Problems and empty shifts, fixed in one tap", DASH),
+  ('Urgent request', 'sel:".oobs-urgent"',                               # opens the request form
+   "Need people now? Text them in one tap", DASH + ',window.oobsUrgentOpen&&window.oobsUrgentOpen()'),
   ("Ava's itinerary", 'sel:".drawer"',
    "Ava's itinerary, set by organizers",
    'e.setPortalTask(null),' + go("directory") + ',e.setVolDrawer("v01")'),
@@ -134,7 +137,7 @@ STEPS = [
    "Directions, tasks and who to call", PORTAL + ',e.setPortalTask("a22")'),
   ('Ask OOBS', NOTHING,
    "Questions? Ask OOBS",
-   'e.setPortalTask(null),' + PORTAL + ',setTimeout(()=>window.oobsOpenChat&&window.oobsOpenChat(),250)'),
+   'e.setPortalTask(null),' + PORTAL + ',setTimeout(()=>window.oobsOpenChat&&window.oobsOpenChat(' + _json_q(ASK_OOBS_SUGGESTION) + '),250)'),
 ]
 import json as _json
 def _step(t):
@@ -249,6 +252,16 @@ sub('onSubmit:E=>{E.preventDefault(),l(n.id,f,e.name),S(!1),u.toast(`${v.name} a
 sub('onClick:()=>m(v)},q)))),x.default.createElement("div",{className:"map-layout"}',
     'onClick:()=>m(v)},q))),x.default.createElement(window.OobsFloorPlanLink,null)),x.default.createElement("div",{className:"map-layout"}', 1)
 
+# Urgent request: organizer card on the dashboard, red banner + text preview in the volunteer view.
+# Components are in the script after #root; requests are stored next to Charlie's data and
+# cleared by "Reset demo data".
+sub('reset(){s(ut()),c("Demo data restored to its original state")}',
+    'reset(){s(ut()),window.oobsUrgentReset&&window.oobsUrgentReset(),c("Demo data restored to its original state")}', 1)
+sub("I.default.createElement(window.OobsContacts,null))}",
+    "I.default.createElement(window.OobsUrgent,{data:ae(),ui:le(),rooms:_,floors:Ne,when:me,fmt:ne}),I.default.createElement(window.OobsContacts,null))}", 1)
+sub('a.default.createElement("div",{className:"portal"},a.default.createElement("header",{className:"p-head"}',
+    'a.default.createElement("div",{className:"portal"},a.default.createElement(window.OobsUrgentInbox,{vol:i,ui:s}),a.default.createElement("header",{className:"p-head"}', 1)
+
 # Desk B now moves from the Hotel Lobby to Gallery X
 sub("Live change: move Desk B to the East Foyer", "Live change: move Desk B to Gallery X", 1)
 sub("Registration Desk B has moved to the East Foyer", "Registration Desk B has moved to Gallery X", 1)
@@ -320,8 +333,11 @@ function typing(a){if(!a)return false;var t=a.tagName;return a.isContentEditable
 function key(e){return e.key===' '||e.key==='Spacebar'?'next':{ArrowRight:'next',PageDown:'next',ArrowLeft:'back',PageUp:'back'}[e.key];}
 addEventListener('keydown',function(e){var tour=document.querySelector('.tour'),k=key(e);
 if(!tour||!k||e.altKey||e.ctrlKey||e.metaKey||typing(document.activeElement))return;
-e.preventDefault();e.stopPropagation();if(e.repeat)return;
-var nav=tour.querySelectorAll('.tour-nav .btn'),b=k==='next'?nav[nav.length-1]:nav[0];if(b&&!b.disabled)b.click();},true);
+e.preventDefault();e.stopPropagation();if(e.repeat)return;tourKey(k);},true);
+function tourKey(k){var tour=document.querySelector('.tour');if(!tour)return;
+var nav=tour.querySelectorAll('.tour-nav .btn'),b=k==='next'?nav[nav.length-1]:nav[0];if(b&&!b.disabled)b.click();}
+/* clicker keys pressed while focus is inside the Ask OOBS chat panel */
+addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.oobs==='tour-key')tourKey(e.data.k);});
 /* stop Space also "pressing" whichever button has focus (that would skip a step) */
 addEventListener('keyup',function(e){if(document.querySelector('.tour')&&key(e)==='next'&&!typing(document.activeElement))e.preventDefault();},true);
 try{var k='oobs-planner-demo-ui-v1',u=JSON.parse(localStorage.getItem(k)||'{}');u.portalVol='v01';localStorage.setItem(k,JSON.stringify(u))}catch(e){}})();</script>
@@ -364,6 +380,7 @@ html[data-view="dashboard"] .content { display: grid; grid-template-columns: rep
 .dash ~ .ops .scn-loc.from strong { text-decoration: none; }
 .dash ~ .ops > .grid-2 { grid-column: 1 / -1; order: 4; }
 .content > .oobs-contacts { grid-column: 1 / -1; order: 5; }
+.content > .oobs-urgent { grid-column: 1 / -1; order: 3; }
 .dash > .grid-2 { grid-column: 1 / -1; order: 6; grid-template-columns: minmax(0, 1fr); }
 .dash ~ .ops > :not(.grid-2):not(.scenario) { display: none; }
 .dash ~ .ops > .grid-2 > .card:not(:has(.issues)):not(:has(.gaps)) { display: none; }
@@ -452,6 +469,44 @@ html[data-view="my-schedule"] .oobs-ask-fab {
 /* Hotel map: official floor plan link */
 .map-page .toolbar { flex-wrap: wrap; }
 .oobs-official { margin-left: auto; text-decoration: none; }
+
+/* Urgent request: organizer card */
+.oobs-urgent { border-color: var(--crit); }
+.oobs-urgent .card-h { align-items: flex-start; }
+.oobs-urgent-btn { white-space: nowrap; }
+.oobs-urgent-form { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px; }
+.oobs-urgent-form .fld { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.oobs-urgent-form .wide { grid-column: 1 / -1; }
+.oobs-urgent-form select, .oobs-urgent-form input { font: inherit; font-size: 14px; font-weight: 500; color: var(--fg); padding: 9px 10px; border-radius: 9px; border: 1px solid var(--border-2); background: var(--surface); }
+.oobs-urgent-hint { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 4px 0 6px; }
+.oobs-urgent-pick, .oobs-urgent-people, .oobs-urgent-log { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.oobs-urgent-pick label { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; }
+.oobs-urgent-pick .nm, .oobs-urgent-people .nm { font-weight: 650; }
+.oobs-urgent-pick .wh { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+.oobs-urgent-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.oobs-sim { font-size: 12px; font-weight: 700; color: var(--crit); }
+div.oobs-sim { margin: 4px 0 6px; }
+.oobs-urgent-count { background: var(--warn-soft); color: var(--fg); border-radius: 99px; padding: 5px 12px; font-weight: 700; font-size: 13px; white-space: nowrap; }
+.oobs-urgent-count.all { background: var(--ok-soft); color: var(--ok); }
+.oobs-urgent-people li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; }
+.oobs-urgent-people .st { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.oobs-urgent-people .st-onway { color: var(--ok); } .oobs-urgent-people .st-cant { color: var(--crit); }
+.oobs-urgent-people .btn { margin-left: auto; }
+.oobs-urgent-log li { font-size: 12.5px; color: var(--fg-2); display: flex; gap: 10px; }
+.oobs-urgent-log .mono { color: var(--muted); font-family: var(--f-mono); }
+.oobs-urgent-log .k-reply { font-weight: 700; color: var(--fg); }
+@media (max-width: 560px) { .oobs-urgent .card-h { flex-wrap: wrap; } .oobs-urgent-form { grid-template-columns: 1fr; } .oobs-urgent-pick .wh { margin-left: 0; width: 100%; } }
+/* Urgent request: volunteer view */
+.oobs-urgent-in { display: grid; gap: 10px; }
+.oobs-urgent-banner { background: var(--crit); color: #fff; border-radius: 14px; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+.oobs-urgent-banner strong { font-size: 16px; }
+.oobs-phone { background: #F2F2F7; border: 8px solid #1D1330; border-radius: 26px; padding: 12px 12px 14px; max-width: 360px; width: 100%; margin: 0 auto; color: #111; }
+.oobs-phone-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 8px; }
+.oobs-sms { background: #E5E5EA; border-radius: 18px 18px 18px 4px; padding: 10px 14px; font-size: 14.5px; line-height: 1.4; }
+.oobs-phone-note { font-size: 11px; color: #888; margin: 4px 0 10px 4px; }
+.oobs-reply { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.oobs-reply .btn { min-height: 44px; }
+.oobs-replied { text-align: center; font-weight: 700; padding: 8px; border-radius: 12px; background: #fff; }
 </style>
 <div id="root"></div>
 <script>/* Team B: small React components used inside Charlie's planner */(function(){
@@ -477,6 +532,82 @@ return h('label',{className:'oobs-issue-type',htmlFor:'oobs-help-type'},h('span'
 window.OobsFloorPlanLink=function(){var R=window.React,h=R.createElement,d=useData(),u=d&&d.links&&d.links.officialFloorPlan;if(!u)return null;
 return h('a',{className:'btn sm oobs-official',href:u,target:'_blank',rel:'noopener'},(d.ui&&d.ui.officialFloorPlan)||'View the official floor plan',' ↗');};
 })();</script>
+<script>/* Team B: Urgent request (organizer card + volunteer text preview). Simulated: nothing is sent. */(function(){
+var UKEY='oobs-planner-demo-urgent-v1';
+try{window.OOBS_URGENT=JSON.parse(localStorage.getItem(UKEY));}catch(e){window.OOBS_URGENT=null;}
+function save(v){window.OOBS_URGENT=v;try{v?localStorage.setItem(UKEY,JSON.stringify(v)):localStorage.removeItem(UKEY);}catch(e){}dispatchEvent(new Event('oobs-urgent'));}
+window.oobsUrgentReset=function(){save(null);};
+window.oobsUrgentOpen=function(){dispatchEvent(new Event('oobs-urgent-open'));};
+function useUrgent(){var R=window.React,s=R.useState(window.OOBS_URGENT);
+R.useEffect(function(){function f(){s[1](window.OOBS_URGENT)}addEventListener('oobs-urgent',f);f();return function(){removeEventListener('oobs-urgent',f)}},[]);return s[0];}
+var FLOORS=['G','2','3'];
+function respond(volId,status){var u=window.OOBS_URGENT;if(!u)return;u=JSON.parse(JSON.stringify(u));
+u.recipients.forEach(function(r){if(r.id===volId){r.status=status;u.log.push({at:u.at,kind:'reply',text:r.name+' replied: '+(status==='onway'?'On my way':"Can't make it")});}});save(u);}
+
+/* Organizer dashboard card */
+window.OobsUrgent=function(p){var R=window.React,h=R.createElement,u=useUrgent();
+var st=p.data.state,clock=st.clock,rooms=p.rooms;
+var open_=R.useState(false),isOpen=open_[0],setOpen=open_[1];
+var room_=R.useState('ballroom'),roomId=room_[0],setRoom=room_[1];
+var cnt_=R.useState(2),count=cnt_[0],setCount=cnt_[1];
+var msg_=R.useState('The lunch line is backing up. Please come and help.'),msg=msg_[0],setMsg=msg_[1];
+var pick_=R.useState(null),picked=pick_[0],setPicked=pick_[1];
+R.useEffect(function(){function f(){setOpen(true);}addEventListener('oobs-urgent-open',f);return function(){removeEventListener('oobs-urgent-open',f)}},[]);
+/* free right now = working today, not on a shift that is happening now; nearest floor first */
+var busy={};st.assignments.forEach(function(a){if(p.when(a,clock)==='now')a.volunteerIds.forEach(function(id){busy[id]=1;});});
+var target=rooms[roomId],tf=FLOORS.indexOf(String(target.floor));
+var free=st.volunteers.filter(function(v){return (v.availability||[]).indexOf(clock.day)>-1&&!busy[v.id];}).map(function(v){
+  var mine=st.assignments.filter(function(a){return a.day===clock.day&&a.volunteerIds.indexOf(v.id)>-1;}).sort(function(a,b){return a.start<b.start?-1:1;});
+  var past=mine.filter(function(a){return p.when(a,clock)==='past';}),next=mine.filter(function(a){return p.when(a,clock)==='future';});
+  var a=past.length?past[past.length-1]:next[0],f=a?rooms[a.room].floor:'2';
+  return {v:v,floor:f,dist:Math.abs(FLOORS.indexOf(String(f))-tf),where:a?(past.length?'Last shift: ':'Next shift: ')+rooms[a.room].name:'At Volunteer HQ'};
+}).sort(function(a,b){return a.dist-b.dist||a.v.name.localeCompare(b.v.name);});
+var chosen=picked||free.slice(0,count).map(function(x){return x.v.id;});
+function toggle(id){var c=chosen.slice(),i=c.indexOf(id);i>-1?c.splice(i,1):c.push(id);setPicked(c);}
+function send(){var t=p.fmt(clock.time),recips=free.filter(function(x){return chosen.indexOf(x.v.id)>-1;}).map(function(x){
+  return {id:x.v.id,name:x.v.name,phone:x.v.phone,email:x.v.email,status:'sent'};});if(!recips.length)return;
+  var log=[];recips.forEach(function(r){log.push({at:t,kind:'text',text:'Text to '+r.name+' ('+r.phone+'): delivered'});log.push({at:t,kind:'email',text:'Email to '+r.name+' ('+r.email+'): delivered'});});
+  save({id:Date.now(),at:t,roomId:roomId,room:target.name,floor:p.floors[target.floor],count:recips.length,message:msg.trim(),recipients:recips,log:log});setOpen(false);setPicked(null);}
+var head=function(title,sub,extra){return h('header',{className:'card-h'},h('div',null,h('h3',null,title),h('p',{className:'sub'},sub)),extra||null);};
+if(u){var on=u.recipients.filter(function(r){return r.status==='onway';}).length,cant=u.recipients.filter(function(r){return r.status==='cant';}).length;
+  return h('section',{className:'card oobs-urgent sent'},
+   head('Urgent request: '+u.room,u.floor+' · sent '+u.at+' · “'+u.message+'”',
+    h('span',{className:'oobs-urgent-count'+(on===u.recipients.length?' all':'')},on+' of '+u.recipients.length+' on the way'+(cant?' · '+cant+" can't make it":''))),
+   h('ul',{className:'oobs-urgent-people'},u.recipients.map(function(r){return h('li',{key:r.id},
+     h('span',{className:'nm'},r.name),h('span',{className:'st st-'+r.status},r.status==='onway'?'On my way':r.status==='cant'?"Can't make it":'Waiting for reply'),
+     h('button',{className:'btn sm ghost',type:'button',onClick:function(){p.ui.setPortalVol(r.id);p.ui.go('my-schedule');}},'Open their phone'));})),
+   h('div',{className:'oobs-sim'},'Simulated: no real texts or emails are sent'),
+   h('ol',{className:'oobs-urgent-log'},u.log.map(function(l,i){return h('li',{key:i,className:'k-'+l.kind},h('span',{className:'mono'},l.at),l.text);})),
+   h('button',{className:'btn sm',type:'button',onClick:function(){save(null);setOpen(true);}},'New urgent request'));}
+if(!isOpen)return h('section',{className:'card oobs-urgent'},head('Urgent request','Need people somewhere right now? Text and email free volunteers in one tap.',
+  h('button',{className:'btn danger oobs-urgent-btn',type:'button',onClick:function(){setOpen(true);}},'⚠ Urgent request')));
+var roomOpts=FLOORS.map(function(f){return h('optgroup',{key:f,label:p.floors[f]},Object.keys(rooms).filter(function(k){return String(rooms[k].floor)===f;}).map(function(k){return h('option',{key:k,value:k},rooms[k].name);}));});
+return h('section',{className:'card oobs-urgent open'},head('Urgent request','Pick a room, how many people and a short message.',
+  h('button',{className:'btn sm ghost',type:'button',onClick:function(){setOpen(false);setPicked(null);}},'Cancel')),
+ h('div',{className:'oobs-urgent-form'},
+  h('label',{className:'fld'},h('span',null,'Room'),h('select',{id:'oobs-urgent-room',value:roomId,onChange:function(e){setRoom(e.target.value);setPicked(null);}},roomOpts)),
+  h('label',{className:'fld small'},h('span',null,'Volunteers'),h('select',{id:'oobs-urgent-count',value:count,onChange:function(e){setCount(+e.target.value);setPicked(null);}},[1,2,3,4,5].map(function(n){return h('option',{key:n,value:n},n);}))),
+  h('label',{className:'fld wide'},h('span',null,'Message'),h('input',{id:'oobs-urgent-msg',maxLength:120,value:msg,onChange:function(e){setMsg(e.target.value);}}))),
+ h('p',{className:'oobs-urgent-hint'},'Free right now, nearest to the '+p.floors[target.floor]+' first'),
+ h('ul',{className:'oobs-urgent-pick'},free.slice(0,6).map(function(x){var on=chosen.indexOf(x.v.id)>-1;return h('li',{key:x.v.id},
+  h('label',null,h('input',{type:'checkbox',checked:on,onChange:function(){toggle(x.v.id);}}),h('span',{className:'nm'},x.v.name),
+   h('span',{className:'wh'},p.floors[x.floor]+' · '+x.where)));})),
+ h('div',{className:'oobs-urgent-foot'},h('button',{className:'btn danger',type:'button',disabled:!chosen.length||!msg.trim(),onClick:send},'Send by text and email ('+chosen.length+')'),
+  h('span',{className:'oobs-sim'},'Simulated: no real texts or emails are sent')));};
+
+/* Volunteer view: red banner + phone-style text */
+window.OobsUrgentInbox=function(p){var R=window.React,h=R.createElement,u=useUrgent();if(!u)return null;
+var r=u.recipients.filter(function(x){return x.id===p.vol.id;})[0];if(!r)return null;
+return h('div',{className:'oobs-urgent-in'},
+ h('div',{className:'oobs-urgent-banner'},h('strong',null,'🚨 Urgent request: '+u.room),h('span',null,u.floor+' · sent '+u.at)),
+ h('div',{className:'oobs-phone'},h('div',{className:'oobs-phone-top'},h('span',null,'Start Proud Volunteers'),h('span',{className:'mono'},u.at)),
+  h('div',{className:'oobs-sms'},'URGENT from Start Proud: '+u.message+' Head to '+u.room+', '+u.floor+'.'),
+  h('div',{className:'oobs-phone-note'},'Simulated text message'),
+  r.status==='sent'?h('div',{className:'oobs-reply'},
+    h('button',{className:'btn primary',type:'button',onClick:function(){respond(r.id,'onway');}},'On my way'),
+    h('button',{className:'btn',type:'button',onClick:function(){respond(r.id,'cant');}},"Can't make it"))
+  :h('div',{className:'oobs-replied'},r.status==='onway'?'✓ You replied: On my way':"You replied: Can't make it")));};
+})();</script>
 <a class="oobs-org-link" href="#dashboard">← Organizer view</a>
 <button class="oobs-ask-fab" type="button" aria-haspopup="dialog">💬 Ask OOBS</button>
 <div class="oobs-chat" hidden>
@@ -489,10 +620,13 @@ return h('a',{className:'btn sm oobs-official',href:u,target:'_blank',rel:'noope
 <script>/* Team B: open the Ask OOBS chat in a panel instead of leaving the planner */(function(){
 var fab=document.querySelector('.oobs-ask-fab'),box=document.querySelector('.oobs-chat'),
 frame=box.querySelector('iframe'),close=box.querySelector('.oobs-chat-close');
-function open(){if(!frame.src)frame.src="CHAT_URL";box.hidden=false;close.focus();}
+var pending=null;
+function suggest(){if(pending&&frame.contentWindow)frame.contentWindow.postMessage({oobs:'suggest',q:pending},location.origin);}
+addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.oobs==='chat-ready')suggest();});
+function open(q){if(typeof q==='string')pending=q;if(!frame.src)frame.src="CHAT_URL";else suggest();box.hidden=false;close.focus();}
 function shut(){if(box.hidden)return;box.hidden=true;fab.focus();}
 window.oobsOpenChat=open;window.oobsCloseChat=function(){box.hidden=true;};
-fab.addEventListener('click',open);close.addEventListener('click',shut);
+fab.addEventListener('click',function(){open();});close.addEventListener('click',shut);
 box.querySelector('.oobs-chat-backdrop').addEventListener('click',shut);
 addEventListener('keydown',function(e){if(e.key==='Escape')shut();});
 addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.oobs==='close-chat')shut();});

@@ -140,6 +140,20 @@ only names, floors and positions changed:
 "View the official floor plan" on the map uses `links.officialFloorPlan` in
 `data/content.json`. **It points at hotelxtoronto.com for now: paste the hotel's PDF link there.**
 
+### Urgent request
+
+On the Organizer dashboard, **⚠ Urgent request** opens a short form: room, how many
+volunteers and a message. It suggests volunteers who are not on a shift right now,
+nearest floor first (based on where their last or next shift is), and ticks the first
+few. **Send by text and email** logs each delivery under "Simulated: no real texts or
+emails are sent". Nothing leaves the browser.
+
+Each recipient's Volunteer dashboard shows a red urgent banner and a phone-style text
+with **On my way** and **Can't make it**. The organizer's card counts replies live
+("2 of 2 on the way"). To show this in a demo, use **Open their phone** next to a name,
+reply, then **← Organizer view**. Ava is on shift at 10:30, so she isn't suggested.
+Reset demo data (or starting the tour) clears the request.
+
 ### Who to contact
 
 `contacts` in `data/content.json` is one table (issue type, first contact, who it
@@ -161,13 +175,14 @@ makes the part being discussed glow and shows a short caption; the presenters do
 talking. It resets the demo data when it starts, so every run begins fresh.
 
 **Clicker / keyboard:** Right arrow, Page Down or Space = next step; Left arrow or
-Page Up = back. These keys are ignored while someone is typing in a text box.
+Page Up = back. These keys are ignored while someone is typing in a text box, and
+keep working after you tap inside the Ask OOBS chat.
 
 | # | Presenter | Step | Caption | What happens |
 |---|---|---|---|---|
 | 1 | Charlie | Organizer dashboard | The whole event on one screen | Title and three numbers glow |
 | 2 | Charlie | Move Desk B | One tap moves Desk B and tells 4 volunteers | The Next button reads **Move Desk B now** and really moves it |
-| 3 | Charlie | Problems and open shifts | Problems and empty shifts, fixed in one tap | Both cards glow |
+| 3 | Charlie | Urgent request | Need people now? Text them in one tap | The Urgent request form opens |
 | 4 | Charlie | Ava's itinerary | Ava's itinerary, set by organizers | Volunteer Directory with Ava's profile open |
 | 5 | Pransh | Every room, every floor | Every room, on every floor | Hotel map, Ground Floor, nothing highlighted |
 | 6 | Pransh | Gallery X | Desk B's new home, updated live | Gallery X glows |
@@ -175,7 +190,7 @@ Page Up = back. These keys are ignored while someone is typing in a text box.
 | 8 | Jordan | Ava's dashboard | Ava's day, on her phone | Up next glows |
 | 9 | Jordan | Changes reach her | Changes reach her automatically | The "Desk B has moved" note glows |
 | 10 | Jordan | Shift instructions | Directions, tasks and who to call | Her shift details open |
-| 11 | Jordan | Ask OOBS | Questions? Ask OOBS | The chat opens; the tour card moves aside so the text box stays clear |
+| 11 | Jordan | Ask OOBS | Questions? Ask OOBS | The chat opens with "Try asking: Who do I tell about a sponsor complaint?"; the tour card moves aside so the text box stays clear |
 
 To change a step, edit `STEPS` in `tools/make_planner.py` and re-run it.
 

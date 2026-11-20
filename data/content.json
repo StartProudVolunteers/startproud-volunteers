@@ -51,7 +51,8 @@
     },
     "close": "Close",
     "myScheduleButton": "My schedule",
-    "officialFloorPlan": "View the official floor plan"
+    "officialFloorPlan": "View the official floor plan",
+    "tryAsking": "Try asking"
   },
   "catchUp": {
     "title": "Today's changes",
