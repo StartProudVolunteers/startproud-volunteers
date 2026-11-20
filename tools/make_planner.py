@@ -97,7 +97,7 @@ DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),(e.page!==
 PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),(e.page!=="my-schedule"&&e.go("my-schedule"))'
 STEPS = [
   # Organizer dashboard
-  ('Organizer dashboard', 'target:"hero"',
+  ('Organizer dashboard', 'sel:".topbar .tb-title"',
    "This is the organizer's view of Out on Bay Street 2027 at Hotel X Toronto: everything happening across the event, on one screen.", DASH),
   ('Three numbers at a glance', 'sel:".dash .kpi, .dash .ss.help"',
    "How many volunteers we have, how many are on shift right now, and how many things need attention: open problems plus tasks flagged as needing help.", DASH),
@@ -180,12 +180,13 @@ html:has(.tour) .oobs-ask-fab { bottom: auto !important; top: calc(env(safe-area
 /* Volunteer Directory cards: hide the "Joined [date]" label (it overlapped long names) */
 .vc-joined { display: none !important; }
 
-/* Organizer dashboard, top to bottom: headline, three numbers, the live change,
+/* Organizer dashboard, top to bottom: three numbers, the live change,
    Problems reported + Fill open shifts (one-tap changes), Recent changes.
    Parts of both pages are laid out on one grid. */
 html[data-view="dashboard"] .content { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; align-content: start; }
 .dash, .dash ~ .ops, .dash > .kpis, .dash > .status-strip { display: contents; }
-.dash > .hero { grid-column: 1 / -1; order: 1; }
+/* The big purple "Every volunteer knows where to be..." banner: removed */
+.dash > .hero { display: none !important; }
 .dash .kpi, .dash .ss.help { order: 2; }
 /* Live change card, simplified: what moves where, and one button */
 .dash ~ .ops > .scenario { grid-column: 1 / -1; order: 3; }

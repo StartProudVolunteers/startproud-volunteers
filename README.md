@@ -130,7 +130,7 @@ It's Charlie's guided tour with 14 new steps. Each step opens the right page, ma
 part being explained glow, and shows what to say. It starts by resetting the demo data,
 so every run begins fresh. Click **Next** (or the dots) to move along.
 
-1. **Organizer dashboard**: the headline, the three numbers, the live change (the button
+1. **Organizer dashboard**: the page title, the three numbers, the live change (the button
    reads **Move Desk B now**; clicking it really moves the desk), Problems reported,
    Fill open shifts, Recent changes.
 2. **Volunteer Directory**: all 30 volunteers, then Ava's profile.
