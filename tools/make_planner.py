@@ -85,57 +85,53 @@ sub("ws={dashboard:rt,", "ws={dashboard:OobsDash,", 1)
 sub("function Ss(){", "function OobsDash(){return I.default.createElement(I.default.Fragment,null,"
     "I.default.createElement(rt,null),I.default.createElement(Nt,null))}function Ss(){", 1)
 
-# --- Presentation Demo: Charlie's guided tour with new steps for this version -----
+# --- Presentation Demo: Charlie's guided tour with Team B's script ---------------
 # A step can name `sel` (any CSS selector) instead of a data-tour `target`;
 # every visible match glows.
 sub('let S=document.querySelector(`[data-tour="${Je[s.step].target}"]`);S&&(S.classList.add("tour-glow"),S.scrollIntoView({block:"center",behavior:"smooth"}))',
+    'let S=[...document.querySelectorAll(Je[s.step].sel||`[data-tour="${Je[s.step].target}"]`)].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed"||x instanceof SVGElement);'
+    'S.forEach(x=>x.classList.add("tour-glow"));S[0]&&S[0].scrollIntoView({block:"center",behavior:"smooth"})', 1)
 # Only change page when the step is on a different page: changing page jumps to the
 # top, so doing it on every step made the view bounce up and back down.
-    'let S=[...document.querySelectorAll(Je[s.step].sel||`[data-tour="${Je[s.step].target}"]`)].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");'
-    'S.forEach(x=>x.classList.add("tour-glow"));S[0]&&S[0].scrollIntoView({block:"center",behavior:"smooth"})', 1)
-DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),(e.page!=="dashboard"&&e.go("dashboard"))'
-PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),(e.page!=="my-schedule"&&e.go("my-schedule"))'
+def go(page):
+    return '(e.page!=="%s"&&e.go("%s"))' % (page, page)
+DASH = 'e.setVolDrawer(null),e.setPortalTask(null),e.setNotifOpen(!1),' + go("dashboard")
+PORTAL = 'e.setVolDrawer(null),e.setPortalVol("v01"),e.setNotifOpen(!1),' + go("my-schedule")
+MAP = 'e.setVolDrawer(null),e.setPortalTask(null),e.setMapFocus(null),' + go("map")
+NOTHING = 'sel:".oobs-no-highlight"'   # matches nothing: no glow on this step
+# (title, what glows, caption, what the step opens). The captions are short on purpose:
+# the presenters do the talking.
 STEPS = [
-  # Organizer dashboard
-  ('Organizer dashboard', 'sel:".topbar .tb-title"',
-   "This is the organizer's view of Out on Bay Street 2027 at Hotel X Toronto: everything happening across the event, on one screen.", DASH),
-  ('Three numbers at a glance', 'sel:".dash .kpi, .dash .ss.help"',
-   "How many volunteers we have, how many are on shift right now, and how many things need attention: open problems plus tasks flagged as needing help.", DASH),
-  ('Make a live change', 'target:"scenario",action:"Move Desk B now"',
-   "The lobby is too crowded, so we move Registration Desk B to the East Foyer. One tap, and every volunteer working there is told automatically.", DASH),
-  ('Fix problems in one tap', 'sel:".dash ~ .ops .card:has(.issues)"',
-   "Problems volunteers report land here. Tap Resolve when one is fixed, or type a new one and tap Report.", DASH),
-  ('Fill open shifts', 'sel:".dash ~ .ops .card:has(.gaps)"',
-   "Shifts that are short-staffed, each with a free volunteer suggested. One tap adds them and updates their schedule.", DASH),
-  ('Every change is logged', 'sel:".dash .card:has(.feed)"',
-   "Every edit, including the Desk B move we just made, is logged here, so the whole team works from one version of the truth.", DASH),
-  # Volunteer Directory
-  ('Volunteer Directory', 'sel:\'html[data-view="directory"] .content > .page > .toolbar\'',
-   "All 30 volunteers in one place. Search by name or skill, filter by team, volunteer type, onboarding or experience, and switch between cards and a table.",
-   'e.setVolDrawer(null),e.setPortalTask(null),(e.page!=="directory"&&e.go("directory"))'),
-  ("A volunteer's profile", 'sel:".drawer"',
-   "Tap anyone to see their profile: role, supervisor, onboarding, skills and every shift. View as this volunteer opens their own dashboard.",
-   '(e.page!=="directory"&&e.go("directory")),e.setVolDrawer("v01")'),
-  # Volunteer dashboard
-  ('Volunteer dashboard', 'target:"up-next"',
-   "Now the volunteer's point of view. Ava is a first-time volunteer who signed up 48 hours before the event. Up next tells her exactly where to be right now.",
-   'e.setPortalTask(null),' + PORTAL),
-  ('Her schedule updated itself', 'target:"change-banner"',
-   "Because we moved Desk B, Ava's shifts already show the East Foyer, with a note explaining why. Nobody had to phone or email her.",
-   'e.setPortalTask(null),' + PORTAL),
-  ('Only her own shifts', 'target:"p-list"',
-   "Ava sees only her own shifts, each with a time, room, floor and status.",
-   'e.setPortalTask(null),' + PORTAL),
-  ('One tap for full instructions', 'target:"sheet-loc"',
-   "Opening a shift shows directions, her tasks, her teammates, and her supervisor with their radio channel.",
-   PORTAL + ',e.setPortalTask("a22")'),
-  ('Ask OOBS', 'sel:".oobs-ask-fab"',
-   "Questions? Ask OOBS opens our volunteer chatbot right here: where Desk B moved, washrooms, lunch, or who to call in an emergency.",
-   'e.setPortalTask(null),' + PORTAL),
-  # Hotel map
-  ('Hotel map', 'target:"floorplan"',
-   "Finally, the hotel map: every room on every floor. Any shift can be highlighted, here the East Foyer, where Desk B now sits.",
-   'e.setVolDrawer(null),e.setPortalTask(null),e.showOnMap("eastFoyer",null)'),
+  # --- Charlie ---
+  ('Organizer dashboard', 'sel:".topbar .tb-title, .dash .kpi, .dash .ss.help"',
+   "The whole event on one screen", DASH),
+  ('Move Desk B', 'target:"scenario",action:"Move Desk B now"',          # Next moves Desk B
+   "One tap moves Desk B and tells 4 volunteers", DASH),
+  ('Problems and open shifts', 'sel:".dash ~ .ops .card:has(.issues), .dash ~ .ops .card:has(.gaps)"',
+   "Problems and empty shifts, fixed in one tap", DASH),
+  ("Ava's itinerary", 'sel:".drawer"',
+   "Ava's itinerary, set by organizers",
+   'e.setPortalTask(null),' + go("directory") + ',e.setVolDrawer("v01")'),
+  # --- Pransh ---
+  ('Every room, every floor', NOTHING,
+   "Every room, on every floor",
+   MAP + ',window.oobsMapPick("floors","Ground Floor"),window.oobsMapPick("days","Both days")'),
+  ('The East Foyer', 'sel:\'.fp-room[aria-label="East Foyer"]\'',
+   "Desk B's new home, updated live",
+   'e.setVolDrawer(null),e.setPortalTask(null),e.showOnMap("eastFoyer",null),window.oobsMapPick("days","Both days")'),
+  ('Right now', 'sel:\'.map-page .toolbar > .seg:not(.floors) button.on, [data-tour="floorplan"]\'',
+   "What's happening in every room right now",
+   MAP + ',window.oobsMapPick("days","Now")'),
+  # --- Jordan ---
+  ("Ava's dashboard", 'target:"up-next"',
+   "Ava's day, on her phone", 'e.setPortalTask(null),' + PORTAL),
+  ('Changes reach her', 'target:"change-banner"',
+   "Changes reach her automatically", 'e.setPortalTask(null),' + PORTAL),
+  ('Shift instructions', 'target:"sheet-loc"',
+   "Directions, tasks and who to call", PORTAL + ',e.setPortalTask("a22")'),
+  ('Ask OOBS', NOTHING,
+   "Questions? Ask OOBS",
+   'e.setPortalTask(null),' + PORTAL + ',setTimeout(()=>window.oobsOpenChat&&window.oobsOpenChat(),250)'),
 ]
 import json as _json
 def _step(t):
@@ -143,7 +139,9 @@ def _step(t):
     extra = ''
     if 'action:' in where:
         extra = ',next:({data:e})=>{e.state.scenarioDone||e.relocateDeskB("Lobby is crowded at the main doors. Use the glass doors at the east end of the lobby.")}'
-    return '{title:' + _json.dumps(title) + ',' + where + ',say:' + _json.dumps(say) + ',enter:({ui:e})=>{' + enter + '}' + extra + '}'
+    # every step first closes the Ask OOBS chat, so Back from the last step works
+    return ('{title:' + _json.dumps(title) + ',' + where + ',say:' + _json.dumps(say) +
+            ',enter:({ui:e})=>{window.oobsCloseChat&&window.oobsCloseChat();' + enter + '}' + extra + '}')
 NEW_TOUR = 'var Je=[' + ','.join(_step(t) for t in STEPS) + '];function St(){'
 _a = html.index('var Je=[{title:"The Organizer dashboard"')
 _b = html.index('}}];function St(){', _a) + len('}}];function St(){')
@@ -160,6 +158,20 @@ sub("<!doctype html><html>", '<!doctype html><html data-theme="light">', 1)
 HELPER = """<script>/* Team B demo helper */(function(){var d=document.documentElement;
 function v(){d.setAttribute('data-view',(location.hash||'#dashboard').slice(1)||'dashboard')}
 v();addEventListener('hashchange',v);
+/* Presentation Demo: press the hotel map's own floor / day buttons (they are internal to Charlie's code) */
+window.oobsMapPick=function(group,label){setTimeout(function(){
+var seg=document.querySelector('.map-page .toolbar > .seg'+(group==='floors'?'.floors':':not(.floors)'));if(!seg)return;
+var b=[].slice.call(seg.querySelectorAll('button')).filter(function(x){return group==='floors'?x.textContent.indexOf(label)>-1:x.textContent.trim()===label;})[0];
+if(b&&!b.classList.contains('on'))b.click();},150);};
+/* Presentation Demo: clicker keys. Right arrow, Page Down, Space = Next; Left arrow, Page Up = Back. */
+function typing(a){if(!a)return false;var t=a.tagName;return a.isContentEditable||t==='TEXTAREA'||t==='SELECT'||(t==='INPUT'&&!/^(button|submit|reset|checkbox|radio|range|color|file)$/i.test(a.type));}
+function key(e){return e.key===' '||e.key==='Spacebar'?'next':{ArrowRight:'next',PageDown:'next',ArrowLeft:'back',PageUp:'back'}[e.key];}
+addEventListener('keydown',function(e){var tour=document.querySelector('.tour'),k=key(e);
+if(!tour||!k||e.altKey||e.ctrlKey||e.metaKey||typing(document.activeElement))return;
+e.preventDefault();e.stopPropagation();if(e.repeat)return;
+var nav=tour.querySelectorAll('.tour-nav .btn'),b=k==='next'?nav[nav.length-1]:nav[0];if(b&&!b.disabled)b.click();},true);
+/* stop Space also "pressing" whichever button has focus (that would skip a step) */
+addEventListener('keyup',function(e){if(document.querySelector('.tour')&&key(e)==='next'&&!typing(document.activeElement))e.preventDefault();},true);
 try{var k='oobs-planner-demo-ui-v1',u=JSON.parse(localStorage.getItem(k)||'{}');u.portalVol='v01';localStorage.setItem(k,JSON.stringify(u))}catch(e){}})();</script>
 """
 sub("<title>Start Proud VolunteerOS (Copy)</title>",
@@ -169,6 +181,11 @@ DEMO_CSS = """<style>/* ===== Team B 2-minute demo: hides parts of Charlie's pla
 /* Presentation Demo: Charlie's guided tour (Team B's steps). Start it from the dashboard. */
 html[data-view="my-schedule"] .demo-top { display: none !important; }
 .oobs-ask-fab.tour-glow { position: fixed !important; z-index: 45 !important; }
+/* Tour glow on a floor-plan room: outline doesn't draw on SVG, so glow the room's border */
+.fp-room.tour-glow rect { stroke: #2BC9BF !important; stroke-width: 7px !important; }
+/* When the tour opens Ask OOBS, keep the tour card off the chat's text box */
+@media (min-width: 861px) { html:has(.oobs-chat:not([hidden])) .tour { right: auto; left: max(20px, env(safe-area-inset-left, 0px)); } }
+@media (max-width: 860px) { html:has(.oobs-chat:not([hidden])) .tour { bottom: auto; top: max(12px, env(safe-area-inset-top, 0px)); } }
 html:has(.tour) .oobs-ask-fab { bottom: auto !important; top: calc(env(safe-area-inset-top, 0px) + 80px) !important; }
 /* Event clock: hidden on every tab. The demo stays at Fri, Apr 30, 10:30 AM. */
 .topbar .clock { display: none !important; }
@@ -269,6 +286,7 @@ var fab=document.querySelector('.oobs-ask-fab'),box=document.querySelector('.oob
 frame=box.querySelector('iframe'),close=box.querySelector('.oobs-chat-close');
 function open(){if(!frame.src)frame.src="CHAT_URL";box.hidden=false;close.focus();}
 function shut(){if(box.hidden)return;box.hidden=true;fab.focus();}
+window.oobsOpenChat=open;window.oobsCloseChat=function(){box.hidden=true;};
 fab.addEventListener('click',open);close.addEventListener('click',shut);
 box.querySelector('.oobs-chat-backdrop').addEventListener('click',shut);
 addEventListener('keydown',function(e){if(e.key==='Escape')shut();});
