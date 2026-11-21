@@ -118,6 +118,9 @@ STEPS = [
   ("Ava's itinerary", 'sel:".drawer"',
    "Ava's itinerary, set by organizers",
    'e.setPortalTask(null),' + go("directory") + ',e.setVolDrawer("v01")'),
+  ('Volunteer Directory', 'sel:\'html[data-view="directory"] .content > .page > .toolbar\'',   # quick: no clicking in
+   "Everyone in one place: search, filter, update",
+   'e.setPortalTask(null),e.setVolDrawer(null),' + go("directory")),
   # --- Pransh ---
   ('Every room, every floor', NOTHING,
    "Every room, on every floor",

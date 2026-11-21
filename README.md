@@ -170,7 +170,7 @@ Role titles are real job titles; every name is invented.
 ### Presentation Demo
 
 Click **Presentation Demo** (top right of the Organizer dashboard, or in the sidebar).
-It's Charlie's guided tour with our 11-step script. Each step opens the right page,
+It's Charlie's guided tour with our 12-step script. Each step opens the right page,
 makes the part being discussed glow and shows a short caption; the presenters do the
 talking. It resets the demo data when it starts, so every run begins fresh.
 
@@ -184,13 +184,14 @@ keep working after you tap inside the Ask OOBS chat.
 | 2 | Charlie | Move Desk B | One tap moves Desk B and tells 4 volunteers | The Next button reads **Move Desk B now** and really moves it |
 | 3 | Charlie | Urgent request | Need people now? Text them in one tap | The Urgent request form opens |
 | 4 | Charlie | Ava's itinerary | Ava's itinerary, set by organizers | Volunteer Directory with Ava's profile open |
-| 5 | Pransh | Every room, every floor | Every room, on every floor | Hotel map, Ground Floor, nothing highlighted |
-| 6 | Pransh | Gallery X | Desk B's new home, updated live | Gallery X glows |
-| 7 | Pransh | Right now | What's happening in every room right now | Map switches to its "Now" filter |
-| 8 | Jordan | Ava's dashboard | Ava's day, on her phone | Up next glows |
-| 9 | Jordan | Changes reach her | Changes reach her automatically | The "Desk B has moved" note glows |
-| 10 | Jordan | Shift instructions | Directions, tasks and who to call | Her shift details open |
-| 11 | Jordan | Ask OOBS | Questions? Ask OOBS | The chat opens with "Try asking: Who do I tell about a sponsor complaint?"; the tour card moves aside so the text box stays clear |
+| 5 | Charlie | Volunteer Directory | Everyone in one place: search, filter, update | Ava's profile closes; the search and filter bar glows (about 10 seconds, nothing to click) |
+| 6 | Pransh | Every room, every floor | Every room, on every floor | Hotel map, Ground Floor, nothing highlighted |
+| 7 | Pransh | Gallery X | Desk B's new home, updated live | Gallery X glows |
+| 8 | Pransh | Right now | What's happening in every room right now | Map switches to its "Now" filter |
+| 9 | Jordan | Ava's dashboard | Ava's day, on her phone | Up next glows |
+| 10 | Jordan | Changes reach her | Changes reach her automatically | The "Desk B has moved" note glows |
+| 11 | Jordan | Shift instructions | Directions, tasks and who to call | Her shift details open |
+| 12 | Jordan | Ask OOBS | Questions? Ask OOBS | The chat opens with "Try asking: Who do I tell about a sponsor complaint?"; the tour card moves aside so the text box stays clear |
 
 To change a step, edit `STEPS` in `tools/make_planner.py` and re-run it.
 
